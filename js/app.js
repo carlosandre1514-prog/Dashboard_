@@ -30,7 +30,7 @@ const prefs = Object.assign({ nome: 'Carlos André', github: 'carlosandre1514-pr
 const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 /* Ícones */
-const I = { home: '<path d="M3 11 12 3l9 8v10H3z"/>', grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>', chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', task: '<path d="M9 11l3 3 8-8M20 12v7H4V5h11"/>', team: '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 0 1 0 8"/>', money: '<path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>', gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>', down: '<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>', code: '<path d="m8 8-5 4 5 4M16 8l5 4-5 4"/>', bug: '<rect x="7" y="7" width="10" height="13" rx="5"/><path d="M12 7V4M3 12h4M17 12h4M4 18l3-2M20 18l-3-2M4 6l3 2M20 6l-3 2"/>', star: '<path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9z"/>', up: '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>', trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>', bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' };
+const I = { home: '<path d="M3 11 12 3l9 8v10H3z"/>', grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>', chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', task: '<path d="M9 11l3 3 8-8M20 12v7H4V5h11"/>', team: '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 0 1 0 8"/>', money: '<path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>', gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>', down: '<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>', code: '<path d="m8 8-5 4 5 4M16 8l5 4-5 4"/>', bug: '<rect x="7" y="7" width="10" height="13" rx="5"/><path d="M12 7V4M3 12h4M17 12h4M4 18l3-2M20 18l-3-2M4 6l3 2M20 6l-3 2"/>', star: '<path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9z"/>', up: '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>', trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>', bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m11 12 9-9M16 7l3 3M14 9l2 2"/>', gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8S10 3 7.5 4.5 9 8 12 8zm0 0s2-5 4.5-3.5S15 8 12 8"/>' };
 const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg>`;
 const stat = ([ic, v, l, ch]) => `<div class="c glass stat"><div class="row"><div class="ico">${svg(ic)}</div>${ch ? `<span class="chip ${String(ch)[0] === '-' ? 'dn' : 'up'}">${ch}</span>` : ''}</div><div class="v">${v}</div><div class="l">${l}</div></div>`;
 const STS = ['Ideia', 'Em desenvolvimento', 'Lançado'], STC = ['rgba(150,170,175,.9)', '#fbbf24', '#34d399'];
@@ -47,7 +47,7 @@ const openBugs = () => S.feedback.filter(f => !f.resolvido);
 function trend(cur, prev) { if (!prev) return ''; const v = Math.round((cur / prev - 1) * 100); return (v >= 0 ? '+' : '') + v + '%'; }
 
 /* ================= Navegação ================= */
-const NAV = [['overview', 'Visão geral', 'home'], ['projects', 'Projetos', 'grid'], ['reports', 'Métricas', 'chart'], ['tasks', 'Tarefas', 'task', 'tasks'], ['bugs', 'Bugs', 'bug', 'bugs'], ['ranking', 'Ranking', 'trophy'], ['team', 'Usuários', 'team'], ['finance', 'Receita', 'money'], ['ideas', 'Ideias', 'bulb'], ['announcements', 'Atualizações', 'up'], ['settings', 'Configurações', 'gear']];
+const NAV = [['overview', 'Visão geral', 'home'], ['projects', 'Projetos', 'grid'], ['apps', 'Apps conectados', 'key'], ['reports', 'Métricas', 'chart'], ['tasks', 'Tarefas', 'task', 'tasks'], ['bugs', 'Bugs', 'bug', 'bugs'], ['ranking', 'Ranking', 'trophy'], ['team', 'Usuários', 'team'], ['finance', 'Receita', 'money'], ['ideas', 'Ideias', 'bulb'], ['announcements', 'Atualizações', 'up'], ['settings', 'Configurações', 'gear']];
 const VIEWS = NAV.map(n => n[0]);
 $('nav').innerHTML = NAV.map(([id, t, ic, b]) => `<button class="nav" data-v="${id}">${svg(ic)}${t}${b ? `<span class="n" id="nb-${b}"></span>` : ''}</button>`).join('');
 let view = 'overview';
@@ -55,7 +55,9 @@ function go() {
   let v = location.hash.slice(1); if (!VIEWS.includes(v)) v = 'overview'; view = v;
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-' + v));
   document.querySelectorAll('.nav').forEach(e => e.classList.toggle('on', e.dataset.v === v));
-  document.body.classList.remove('open'); drawAll();
+  document.body.classList.remove('open');
+  if (v === 'apps' && !$('shell').hidden) openApps();
+  drawAll();
 }
 const nav = v => { if (location.hash !== '#' + v) location.hash = v; go(); };
 $('nav').onclick = e => { const b = e.target.closest('.nav'); if (b) nav(b.dataset.v); };
@@ -126,6 +128,7 @@ function drawAll() {
   if (view === 'overview') { barChart($('bars'), v, l); donut($('donut')); }
   if (view === 'finance') { const L = profitByMonth(); barChart($('fbars'), L.map(x => x[1]), L.map(x => innerWidth < 600 ? mlabel(x[0])[0] : mlabel(x[0])), 1); ring($('ring'), monthRevenue() / (prefs.meta || 1)); }
   if (view === 'reports') lineChart($('line'));
+  if (view === 'apps') drawApp();
 }
 document.querySelectorAll('.fig').forEach(f => new ResizeObserver(() => drawAll()).observe(f));
 
@@ -183,32 +186,6 @@ $('q').oninput = () => { if (view !== 'projects') nav('projects'); renderProject
 
 /* ---------- Gaveta do projeto ---------- */
 let openId = null, delArm = false;
-function snippet(p) {
-  const c = window.PAINEL_CONFIG;
-  return `<script>
-/* Painel de Projetos: cole antes de </body> no ${p.nome} */
-window.painel = (function () {
-  var URL = '${c.supabaseUrl}/rest/v1/';
-  var KEY = '${c.supabaseKey}';
-  var PROJETO = '${p.id}';
-  var u = localStorage.getItem('painel_uid');
-  if (!u) { u = crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()); localStorage.setItem('painel_uid', u); }
-  var ua = navigator.userAgent, plat = /Android/i.test(ua) ? 'Android' : /iPhone|iPad/i.test(ua) ? 'iOS' : 'Web';
-  function enviar(tabela, corpo) {
-    return fetch(URL + tabela, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(corpo) }).catch(function () {});
-  }
-  function evento(tipo, dados) { return enviar('painel_eventos', { projeto_id: PROJETO, tipo: tipo, usuario: u, plataforma: plat, dados: dados || {} }); }
-  if (!localStorage.getItem('painel_inst')) { localStorage.setItem('painel_inst', '1'); evento('instalar'); }
-  evento('abrir');
-  window.addEventListener('error', function (e) { evento('erro', { mensagem: String(e.message).slice(0, 300) }); });
-  return {
-    cadastro: function () { evento('cadastro'); },
-    partida: function (nome, abates, vitoria, minutos) { evento('partida', { nome: nome, abates: abates, vitoria: !!vitoria, minutos: minutos }); },
-    feedback: function (tipo, mensagem, contato) { return enviar('painel_feedback', { projeto_id: PROJETO, tipo: tipo, mensagem: mensagem, contato: contato || '' }); }
-  };
-})();
-<\/script>`;
-}
 function openProject(id) {
   const p = proj(id); if (!p) return; openId = id; delArm = false;
   const lim = Date.now() - 30 * DAY;
@@ -232,8 +209,8 @@ function openProject(id) {
   <div class="sec"><h3>Versões</h3>${vs.length ? vs.map(v => `<div class="li"><span class="pill">${esc(v.versao)}</span><div class="grow">${esc(v.texto)}</div><small>${ago(v.criado_em)}</small></div>`).join('') : '<p class="empty" style="padding:6px 0">Nenhuma versão publicada.</p>'}
    <form id="dvf" class="row2" style="margin-top:10px"><input class="inp" id="dvv" placeholder="v1.0.0" required maxlength="30" style="flex:0 1 120px" aria-label="Versão"><input class="inp" id="dvt" placeholder="O que mudou?" maxlength="2000" aria-label="O que mudou"><button class="btn pri" style="flex:0 0 auto">Publicar</button></form></div>
   <div class="sec"><h3>Últimos commits</h3><div id="dcm">${p.github ? '<p class="empty" style="padding:6px 0">Carregando…</p>' : '<p class="empty" style="padding:6px 0">Coloque o repositório do GitHub acima para ver os commits.</p>'}</div></div>
-  <div class="sec"><h3>Ligar este app ao painel</h3><p style="color:var(--mut);margin:0;font-size:14px">Cole o código abaixo no HTML do app. Ele envia aberturas, instalações e erros. Use <code>painel.cadastro()</code> quando alguém criar conta, <code>painel.feedback('bug', 'mensagem')</code> para bugs${p.tipo === 'Jogo' ? ' e <code>painel.partida(nome, abates, venceu, minutos)</code> no fim de cada partida' : ''}.</p>
-   <pre class="code" id="dsn">${esc(snippet(p))}</pre><button class="btn" data-x="copy">Copiar código</button></div>
+  <div class="sec"><h3>Ligar este app ao painel</h3><p style="color:var(--mut);margin:0 0 10px;font-size:14px">${S.chaves.some(c => c.projeto_id === id) ? 'Este app já está conectado. Veja jogadores, receita, servidor e tudo mais em Apps conectados.' : 'Gere uma chave de acesso para este app enviar jogadores, assinaturas, transações, partidas e o status do servidor.'}</p>
+   <button class="btn pri" data-x="apps">${S.chaves.some(c => c.projeto_id === id) ? 'Abrir dados do app' : 'Conectar este app'}</button></div>
   <div class="sec"><button class="btn" data-x="del" id="ddel" style="border-color:rgba(251,113,133,.5)">Excluir projeto</button></div>`;
   $('drawer').hidden = false; document.body.style.overflow = 'hidden';
   $('dpr').oninput = e => { $('dpv').textContent = e.target.value + '%'; };
@@ -260,11 +237,261 @@ $('dpanel').onclick = e => {
   const x = b.dataset.x;
   if (x === 'close') closeDrawer();
   if (x === 'save') act(async () => { await Store.upd('projetos', id, { nome: $('dn').value.trim() || 'Sem nome', tipo: $('dk').value, tecnologia: $('dt').value.trim(), github: $('dg').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''), url_app: $('du').value.trim(), notas: $('dno').value }); renderAll(); openProject(id); }, 'Projeto salvo');
-  if (x === 'copy') copy(snippet(proj(id)), 'Código copiado');
+  if (x === 'apps') { const ok = S.chaves.some(c => c.projeto_id === id); closeDrawer(); nav('apps'); if (ok) { appSel = id; openApps(id); } else showConnect(id); }
   if (x === 'del') { if (!delArm) { delArm = true; b.textContent = 'Toque de novo para excluir tudo deste projeto'; return; } act(async () => { await Store.del('projetos', id); closeDrawer(); renderAll(); }, 'Projeto excluído'); }
 };
 $('dpanel').onchange = e => { const t = e.target.dataset.tk; if (t) act(async () => { await Store.upd('tarefas', t, { coluna: e.target.checked ? 2 : 0 }); renderAll(); openProject(openId); }); };
 async function copy(text, ok) { try { await navigator.clipboard.writeText(text); toast(ok); } catch (e) { toast('Não deu para copiar. Segure no texto e copie à mão.'); } }
+
+/* ================= Apps conectados ================= */
+let appSel = '', appD = null, appTab = 'Jogadores', appInt = 'Site / HTML', chaveNova = null, keyDel = null, acMode = 'Gerar chave';
+const isOn = j => !!j.online_ate && new Date(j.online_ate) > Date.now();
+const srvOn = s => !!(s && s.ativo && s.ultimo_sinal && Date.now() - new Date(s.ultimo_sinal) < 3 * 60e3);
+const dur = sec => { sec = Math.max(0, Math.floor(sec)); const d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60); return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + String(m).padStart(2, '0') + 'min' : m + ' min'; };
+const METODO = { google: 'Google', email: 'E-mail', apple: 'Apple', facebook: 'Facebook', anonimo: 'Convidado', telefone: 'Telefone', discord: 'Discord' };
+const PLANO = { mensal: 'Mensal', anual: 'Anual', semanal: 'Semanal', vitalicio: 'Vitalício' };
+const cap = t => t ? t[0].toUpperCase() + t.slice(1) : '';
+const planoAtivo = j => !!j.plano && !!j.plano_expira && new Date(j.plano_expira) > Date.now();
+const mrrOf = j => j.plano_status === 'cancelada' ? 0 : j.plano === 'anual' ? j.plano_valor / 12 : j.plano === 'semanal' ? j.plano_valor * 52 / 12 : j.plano === 'vitalicio' ? 0 : +j.plano_valor;
+const evValor = e => { const v = +e.dados?.valor || 0; if (e.tipo === 'transacao') return e.dados?.tipo === 'reembolso' ? -v : v; if (e.tipo === 'assinatura') { const s = e.dados?.status || 'ativa'; return s === 'reembolsada' ? -v : ['ativa', 'renovada', 'nova'].includes(s) ? v : 0; } return 0; };
+const dkey = d => { const x = new Date(d); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+const days30 = () => { const a = []; for (let i = 29; i >= 0; i--) a.push(dkey(Date.now() - i * DAY)); return a; };
+const dt = t => new Date(t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+const connectedApps = () => { const ids = new Set(S.chaves.map(c => c.projeto_id)); return S.projetos.filter(p => ids.has(p.id)); };
+
+async function loadApp(full) {
+  const pid = appSel; if (!pid) { appD = null; return renderApps(); }
+  try {
+    if (full || !appD || appD.pid !== pid || appD.erro) appD = { ...(await Store.appData(pid)), pid };
+    else Object.assign(appD, await Store.appLive(pid));
+  } catch (e) { if (appSel === pid) appD = { pid, erro: e.message || String(e) }; }
+  if (appSel === pid) { renderApps(); drawAll(); }
+}
+function openApps(pid) {
+  if (pid) appSel = pid;
+  const L = connectedApps(); if (!L.some(p => p.id === appSel)) appSel = L[0]?.id || '';
+  renderApps(); if (appSel && (!appD || appD.pid !== appSel)) loadApp(true);
+}
+setInterval(() => { if (view === 'apps' && appSel && !document.hidden && !$('shell').hidden) loadApp(false); }, 20000);
+
+function renderApps() {
+  const L = connectedApps();
+  $('aproj').innerHTML = L.map(p => `<option value="${p.id}" ${p.id === appSel ? 'selected' : ''}>${esc(p.nome)}</option>`).join('') || '<option value="">Nenhum app conectado</option>';
+  $('aproj').disabled = !L.length;
+  $('acp').innerHTML = S.projetos.map(p => `<option value="${p.id}" ${p.id === (appSel || '') ? 'selected' : ''}>${esc(p.nome)} · ${p.tipo}</option>`).join('') || '<option value="">Crie um projeto primeiro</option>';
+  const err = S.chavesErro ? 'A área de apps conectados ainda não foi ativada no Supabase. Rode o arquivo supabase/apps_conectados.sql no SQL Editor (detalhe: ' + S.chavesErro + ')' : appD?.erro ? 'Não deu para carregar os dados do app: ' + appD.erro : '';
+  $('aerr').hidden = !err; $('aerr').textContent = err;
+  $('aempty').hidden = !!L.length || !$('acf').hidden || !!S.chavesErro;
+  $('abody').hidden = !appSel;
+  renderReveal();
+  if (!appSel) return;
+  renderAppKeys(); renderAppCode();
+  const D = appD && appD.pid === appSel && !appD.erro ? appD : null;
+  if (!D) { $('asrv').innerHTML = '<p class="empty" style="padding:6px 0;margin:0">Carregando dados do app…</p>'; ['aplayers', 'amoney', 'agame'].forEach(i => $(i).innerHTML = ''); $('atbody').innerHTML = ''; return; }
+  const p = proj(appSel), J = D.jogadores, E = D.eventos, s = D.servidor, now = Date.now(), lim = now - 30 * DAY, lim2 = now - 60 * DAY;
+  const in30 = e => new Date(e.criado_em) > lim, in60 = e => new Date(e.criado_em) > lim2 && !in30(e);
+  const sOn = srvOn(s), onJ = J.filter(isOn).length, online = sOn ? Math.max(s.online, onJ) : onJ, total = J.length;
+  const novos30 = J.filter(j => new Date(j.primeiro_em) > lim).length, novos60 = J.filter(j => { const t = new Date(j.primeiro_em); return t > lim2 && t <= lim; }).length;
+  const ativos7 = J.filter(j => new Date(j.visto_em) > now - 7 * DAY).length;
+  const up = D.uptime || [], up30 = up.filter(u => u.dia >= dkey(lim)).reduce((a, u) => a + u.segundos, 0);
+  // Servidor
+  const ult = s?.ultimo_sinal;
+  $('asrv').innerHTML = `<div class="st-main"><span class="pulse ${s ? (sOn ? 'on' : 'off') : ''}"></span><div><b>${s ? (sOn ? 'Servidor online' : 'Servidor offline') : 'Nenhum servidor enviando sinal'}</b><small>${s ? (sOn ? 'Ativo há ' + dur((now - new Date(s.ativo_desde)) / 1000) + (s.versao ? ' · versão ' + esc(s.versao) : '') : 'Último sinal ' + (ult ? ago(ult) : '—')) : 'Use o código do servidor (abaixo) para ver online, horas ativas e status.'}</small></div></div>
+   <div class="kvs"><div><b>${num(online)}</b><small>Online agora</small></div><div><b>${(up30 / 3600).toFixed(1).replace('.', ',')} h</b><small>Ativo em 30 dias</small></div><div><b>${up.length ? (up30 / (30 * 864) ).toFixed(1).replace('.', ',') + '%' : '—'}</b><small>Disponibilidade</small></div><div><b>${num(Math.max(0, ...up.map(u => u.pico_online)))}</b><small>Pico online (30d)</small></div><div><b>${ult ? ago(ult) : '—'}</b><small>Último sinal</small></div></div>`;
+  // Jogadores
+  $('aplayers').innerHTML = [['team', num(total), (p?.tipo === 'Jogo' ? 'Jogadores' : 'Usuários') + ' no total'], ['user', num(online) + `<small>${total ? Math.round(online / total * 100) : 0}%</small>`, 'Online agora'], ['clock', num(Math.max(0, total - online)), 'Offline'], ['up', num(novos30), 'Novos (30 dias)', trend(novos30, novos60)]].map(stat).join('');
+  // Dinheiro
+  const rec30 = E.filter(in30).reduce((a, e) => a + evValor(e), 0), rec60 = E.filter(in60).reduce((a, e) => a + evValor(e), 0);
+  const subs = J.filter(planoAtivo), mrr = subs.reduce((a, j) => a + mrrOf(j), 0), compras = E.filter(e => e.tipo === 'transacao' && in30(e) && e.dados?.tipo !== 'reembolso');
+  const pagantes = J.filter(j => +j.gasto > 0).length;
+  $('amoney').innerHTML = [['money', fmt(rec30), 'Receita (30 dias)', trend(rec30, rec60)], ['star', fmt(mrr), 'Receita recorrente por mês'], ['team', num(subs.length), 'Assinantes ativos'], ['code', compras.length ? fmt(compras.reduce((a, e) => a + (+e.dados?.valor || 0), 0) / compras.length) : '—', 'Ticket médio por compra']].map(stat).join('');
+  $('arevTot').textContent = 'Últimos 30 dias · ' + fmt(rec30) + ' · ' + num(pagantes) + ' pagantes no total';
+  // Cadastro por método e planos
+  const MT = {}; J.forEach(j => { const m = j.metodo || 'não informado'; MT[m] = (MT[m] || 0) + 1; });
+  const ML = Object.entries(MT).sort((a, b) => b[1] - a[1]).slice(0, 6), mm = ML[0]?.[1] || 1;
+  $('ametodo').innerHTML = ML.length ? ML.map(([m, v]) => `<div><span>${esc(METODO[m] || cap(m))}</span><span class="bar"><i style="width:${v / mm * 100}%"></i></span><b class="r">${num(v)}</b></div>`).join('') : '<p class="empty" style="padding:6px 0">Sem cadastros ainda.</p>';
+  const PL = {}; subs.forEach(j => PL[j.plano] = (PL[j.plano] || 0) + 1);
+  const PLL = Object.entries(PL).sort((a, b) => b[1] - a[1]), pm = PLL[0]?.[1] || 1;
+  $('aplanTot').textContent = subs.filter(j => j.plano_status === 'cancelada').length + ' cancelados que ainda valem até vencer';
+  $('aplanos').innerHTML = PLL.length ? PLL.map(([k, v]) => `<div><span>${esc(PLANO[k] || cap(k))}</span><span class="bar"><i style="width:${v / pm * 100}%"></i></span><b class="r">${num(v)}</b></div>`).join('') : '<p class="empty" style="padding:6px 0">Nenhuma assinatura ativa.</p>';
+  // Jogo
+  const part = E.filter(e => e.tipo === 'partida' && in30(e)), pres = E.filter(e => e.tipo === 'presente' && in30(e));
+  $('agame').innerHTML = [['game', num(part.length), 'Partidas (30 dias)'], ['clock', part.length ? Math.round(part.reduce((a, e) => a + (+e.dados?.minutos || 0), 0) / part.length) + ' min' : '—', 'Duração média da partida'], ['gift', num(pres.length), 'Presentes enviados (30 dias)'], ['team', num(ativos7), 'Ativos nos últimos 7 dias']].map(stat).join('');
+  $('anewTot').textContent = 'Por dia · ' + num(novos30) + ' em 30 dias';
+  $('aupTot').textContent = 'Horas por dia · ' + (up30 / 3600).toFixed(0) + ' h em 30 dias';
+  renderAppTable();
+}
+
+function appRows() {
+  const D = appD, J = D.jogadores, byU = {}; J.forEach(j => byU[j.usuario] = j);
+  const who = e => e.dados?.nome || byU[e.usuario]?.nome || shortUser(e.usuario);
+  const evs = t => D.eventos.filter(e => e.tipo === t);
+  const pill = (t, cls) => `<span class="tag ${cls || ''}">${esc(t)}</span>`;
+  const W = n => `<span class="who"><span class="av">${esc(ini(n))}</span>${esc(n)}</span>`;
+  if (appTab === 'Jogadores') return { h: ['Jogador', 'Status', 'Cadastro', 'Plano', 'Gasto', 'Partidas', 'Desde'], r: [...J].sort((a, b) => isOn(b) - isOn(a) || String(b.visto_em).localeCompare(String(a.visto_em))).map(j => { const n = j.nome || shortUser(j.usuario), on = isOn(j); return { q: n + ' ' + j.usuario + ' ' + j.plataforma, csv: [n, j.usuario, on ? 'online' : 'offline', j.visto_em, j.metodo, j.plano, j.plano_status, j.plano_expira || '', j.gasto, j.partidas, j.primeiro_em], html: [W(n), `<span class="dotj${on ? ' on' : ''}"></span>${on ? 'Online' : 'Visto ' + ago(j.visto_em)}`, esc(METODO[j.metodo] || cap(j.metodo) || '—') + (j.plataforma ? ' · ' + esc(j.plataforma) : ''), j.plano ? pill((PLANO[j.plano] || cap(j.plano)) + (planoAtivo(j) ? (j.plano_status === 'cancelada' ? ' · cancelado' : '') : ' · vencido'), planoAtivo(j) && j.plano_status !== 'cancelada' ? 'up' : 'dn') : '—', `<span class="num">${fmt(j.gasto)}</span>`, num(j.partidas), new Date(j.primeiro_em).toLocaleDateString('pt-BR')] }; }), right: [4, 5] };
+  if (appTab === 'Assinaturas') return { h: ['Data', 'Jogador', 'Plano', 'Status', 'Valor'], r: evs('assinatura').map(e => { const n = who(e), st = e.dados?.status || 'ativa'; return { q: n + ' ' + (e.dados?.plano || ''), csv: [e.criado_em, n, e.usuario, e.dados?.plano, st, e.dados?.valor], html: [dt(e.criado_em), W(n), esc(PLANO[e.dados?.plano] || cap(e.dados?.plano) || '—'), pill(cap(st), ['ativa', 'renovada', 'nova'].includes(st) ? 'up' : 'dn'), fmt(e.dados?.valor)] }; }), right: [4] };
+  if (appTab === 'Transações') return { h: ['Data', 'Jogador', 'Item', 'Tipo', 'Valor'], r: evs('transacao').map(e => { const n = who(e), rb = e.dados?.tipo === 'reembolso'; return { q: n + ' ' + (e.dados?.item || ''), csv: [e.criado_em, n, e.usuario, e.dados?.item, rb ? 'reembolso' : 'compra', e.dados?.valor], html: [dt(e.criado_em), W(n), esc(e.dados?.item || '—'), pill(rb ? 'Reembolso' : 'Compra', rb ? 'dn' : 'up'), `<b class="num">${rb ? '−' : ''}${fmt(e.dados?.valor)}</b>`] }; }), right: [4] };
+  if (appTab === 'Presentes') return { h: ['Data', 'De', 'Para', 'Presente', 'Valor'], r: evs('presente').map(e => { const n = who(e); return { q: n + ' ' + (e.dados?.para || '') + ' ' + (e.dados?.item || ''), csv: [e.criado_em, n, e.dados?.para, e.dados?.item, e.dados?.valor], html: [dt(e.criado_em), W(n), esc(e.dados?.para || '—'), esc(e.dados?.item || '—'), num(e.dados?.valor)] }; }), right: [4] };
+  if (appTab === 'Partidas') return { h: ['Data', 'Jogador', 'Modo', 'Abates', 'Resultado', 'Duração'], r: evs('partida').map(e => { const n = who(e), w = !!e.dados?.vitoria; return { q: n + ' ' + (e.dados?.modo || ''), csv: [e.criado_em, n, e.dados?.modo, e.dados?.abates, w ? 'vitória' : 'derrota', e.dados?.minutos], html: [dt(e.criado_em), W(n), esc(e.dados?.modo || '—'), num(e.dados?.abates), pill(w ? 'Vitória' : 'Derrota', w ? 'up' : 'dn'), (+e.dados?.minutos || 0) + ' min'] }; }), right: [3, 5] };
+  return { h: ['Data', 'Tipo', 'Jogador', 'Plataforma', 'Dados'], r: D.eventos.map(e => { const n = e.usuario ? who(e) : '—', { nome, ...rest } = e.dados || {}, js = JSON.stringify(rest); return { q: e.tipo + ' ' + n + ' ' + js, csv: [e.criado_em, e.tipo, n, e.usuario, e.plataforma, js], html: [dt(e.criado_em), pill(e.tipo), esc(n), esc(e.plataforma || '—'), `<code style="font-size:12px;word-break:break-all">${esc(js === '{}' ? '' : js.slice(0, 160))}</code>`] }; }), right: [] };
+}
+function renderAppTable() {
+  if (!appD || appD.erro) return;
+  const T = appRows(), q = $('aq').value.trim().toLowerCase(), R = q ? T.r.filter(x => x.q.toLowerCase().includes(q)) : T.r;
+  $('athead').innerHTML = '<tr>' + T.h.map((h, i) => `<th${T.right.includes(i) || /Valor|Gasto/.test(h) ? ' class="r"' : ''}>${h}</th>`).join('') + '</tr>';
+  $('atbody').innerHTML = R.length ? R.slice(0, 300).map(x => '<tr>' + x.html.map((c, i) => `<td${T.right.includes(i) || /Valor|Gasto/.test(T.h[i]) ? ' class="r"' : ''}>${c}</td>`).join('') + '</tr>').join('') : `<tr><td colspan="${T.h.length}" class="empty">Nada aqui ainda.</td></tr>`;
+  $('atabSum').textContent = num(R.length) + (R.length === 1 ? ' registro' : ' registros') + (R.length > 300 ? ' · mostrando 300 (use a busca ou o CSV)' : '') + (appTab !== 'Jogadores' ? ' · últimos 90 dias' : '');
+}
+seg('atab', t => { appTab = t; $('aq').value = ''; renderAppTable(); });
+$('aq').oninput = renderAppTable;
+$('acsv').onclick = () => { if (!appD || appD.erro) return; const T = appRows(), q = $('aq').value.trim().toLowerCase(), R = q ? T.r.filter(x => x.q.toLowerCase().includes(q)) : T.r; download((pname(appSel) + '-' + appTab).toLowerCase().replace(/[^a-z0-9]+/gi, '-') + '.csv', R.map(x => x.csv.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(';')).join('\n'), 'text/csv'); };
+$('aproj').onchange = () => { appSel = $('aproj').value; appD = null; renderApps(); loadApp(true); };
+
+function drawApp() {
+  if (!appD || appD.erro || appD.pid !== appSel) return;
+  const K = days30(), lab = K.map(k => String(+k.slice(8))), R = {}, N = {}, U = {};
+  appD.eventos.forEach(e => { const v = evValor(e); if (v) { const k = dkey(e.criado_em); R[k] = (R[k] || 0) + v; } });
+  appD.jogadores.forEach(j => { const k = dkey(j.primeiro_em); N[k] = (N[k] || 0) + 1; });
+  (appD.uptime || []).forEach(u => U[u.dia] = u.segundos / 3600);
+  barChart($('arevc'), K.map(k => Math.max(0, R[k] || 0)), lab, 1);
+  barChart($('aupc'), K.map(k => +(U[k] || 0).toFixed(1)), lab);
+  barChart($('anewc'), K.map(k => N[k] || 0), lab);
+}
+
+/* Chaves */
+function renderAppKeys() {
+  const L = S.chaves.filter(c => c.projeto_id === appSel);
+  $('akeys').innerHTML = L.length ? L.map(c => `<div class="keyrow"><div class="ico" style="margin:0;width:34px;height:34px">${svg('key')}</div><div class="grow"><b>${esc(c.nome)}</b> ${c.ativa ? '<span class="tag up">Ativa</span>' : '<span class="tag dn">Desativada</span>'}<small><code>${esc(c.prefixo)}••••••••</code> · ${c.ultimo_uso ? 'usada ' + ago(c.ultimo_uso) + ' · ' + num(c.usos) + ' envios' : 'nunca usada'}</small></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="mini" data-kt="${c.id}">${c.ativa ? 'Desativar' : 'Ativar'}</button><button class="mini" data-kd="${c.id}">${keyDel === c.id ? 'Toque de novo para apagar' : 'Apagar'}</button></div></div>`).join('') : '<p class="empty" style="padding:6px 0">Nenhuma chave.</p>';
+}
+$('akeys').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.kt) act(async () => { const c = S.chaves.find(x => x.id === b.dataset.kt); await Store.updChave(c.id, { ativa: !c.ativa }); renderAppKeys(); }, 'Chave atualizada');
+  if (b.dataset.kd) { if (keyDel !== b.dataset.kd) { keyDel = b.dataset.kd; return renderAppKeys(); } keyDel = null; act(async () => { await Store.delChave(b.dataset.kd); openApps(); }, 'Chave apagada. Apps usando ela param de enviar dados.'); }
+};
+function showConnect(pid) {
+  $('acf').hidden = false; chaveNova = null; renderApps(); if (pid) $('acp').value = pid;
+  $('acn').value = ''; $('ack').value = ''; $('acf').scrollIntoView({ behavior: 'smooth', block: 'start' }); $('acn').focus();
+}
+$('aNew').onclick = () => showConnect();
+$('aFirst').onclick = () => showConnect();
+$('aKeyNew').onclick = () => showConnect(appSel);
+$('acx').onclick = () => { $('acf').hidden = true; renderApps(); };
+seg('acm', t => { acMode = t; $('ack').hidden = t === 'Gerar chave'; $('ack').required = t !== 'Gerar chave'; if (t !== 'Gerar chave') $('ack').focus(); });
+$('acf').onsubmit = e => {
+  e.preventDefault(); const pid = $('acp').value; if (!pid) return toast('Crie um projeto primeiro');
+  act(async () => {
+    const gerar = acMode === 'Gerar chave', chave = gerar ? Store.novaChave() : $('ack').value.trim();
+    await Store.addChave(pid, $('acn').value.trim(), chave);
+    chaveNova = { pid, chave, gerada: gerar }; $('acf').hidden = true; appSel = pid; appD = null;
+    renderApps(); loadApp(true); $('arev').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 'App conectado');
+};
+function renderReveal() {
+  const k = chaveNova && chaveNova.pid === appSel ? chaveNova : null; $('arev').hidden = !k; if (!k) return;
+  $('arev').innerHTML = `<h3 style="margin:0;font-size:16px">${svg('key').replace('<svg', '<svg width="18" height="18" style="vertical-align:-3px;margin-right:6px"')}Chave de ${esc(pname(k.pid))}</h3>
+   <div class="keybox"><code>${esc(k.chave)}</code><button class="btn pri" id="arevCopy">Copiar chave</button></div>
+   <small style="color:var(--mut)">${k.gerada ? '<b style="color:var(--warn)">Guarde agora:</b> por segurança o painel só guarda uma impressão digital da chave, e ela não aparece de novo. ' : ''}O código abaixo, em "Como ligar o app", já está com essa chave.</small>
+   <div style="margin-top:10px"><button class="mini" id="arevOk">Já guardei</button></div>`;
+  $('arevCopy').onclick = () => copy(k.chave, 'Chave copiada');
+  $('arevOk').onclick = () => { $('arev').hidden = true; chaveNova = { ...k, oculta: true }; };
+}
+
+/* Código de integração */
+const TIPOS = [['instalar / abrir', 'Automático no código do site: primeira vez e cada abertura'], ['ping / saiu', 'Automático: mantém o jogador como online e marca quando sai'], ['cadastro', '{ metodo: "google" | "email" | "apple" | "anonimo" }'], ['login', '{ metodo }'], ['assinatura', '{ plano: "mensal" | "anual" | "semanal", valor, status: "ativa" | "renovada" | "cancelada" | "expirada" | "reembolsada", expira_em? }'], ['transacao', '{ valor, item, tipo?: "compra" | "reembolso" }'], ['presente', '{ para, item, valor? }'], ['partida', '{ abates, vitoria, minutos, modo? }'], ['entrou', 'Jogador entrou no servidor (marca online)'], ['servidor', '{ online, versao? } a cada 1 minuto: status, horas ativas e jogadores online'], ['servidor_parou', 'Servidor desligando'], ['erro', '{ mensagem }'], ['feedback', '{ tipo: "bug" | "sugestao", mensagem, contato? }'], ['qualquer outro', 'Nome em minúsculas, com os dados que quiser: aparece na aba Eventos']];
+$('atipos').innerHTML = '<dl>' + TIPOS.map(([t, d]) => `<dt><code>${esc(t)}</code></dt><dd>${esc(d)}</dd>`).join('') + '</dl><p style="color:var(--mut);margin:10px 0 0">Todo evento pode ter <code>usuario</code> (id do jogador) e <code>nome</code>. Valores em reais.</p>';
+seg('aint', t => { appInt = t; renderAppCode(); });
+const keyFor = pid => chaveNova && chaveNova.pid === pid ? chaveNova.chave : 'COLE_SUA_CHAVE_AQUI';
+function codeFor(pid, tipo) {
+  const c = window.PAINEL_CONFIG, url = c.supabaseUrl + '/rest/v1/rpc/painel_enviar', K = keyFor(pid), nome = pname(pid);
+  if (tipo === 'Servidor Node') return `// Painel de Projetos · servidor do ${nome} (Node 18+)
+// Guarde a chave numa variável de ambiente: PAINEL_CHAVE=${K}
+const PAINEL_URL = '${url}';
+const PAINEL_API = '${c.supabaseKey}';
+const PAINEL_CHAVE = process.env.PAINEL_CHAVE;
+
+function painel(eventos) {
+  return fetch(PAINEL_URL, {
+    method: 'POST',
+    headers: { apikey: PAINEL_API, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chave: PAINEL_CHAVE, eventos: [].concat(eventos) })
+  }).catch(() => {});
+}
+
+// 1) Sinal de vida a cada minuto: servidor online, horas ativas e jogadores online
+const sinal = () => painel({ tipo: 'servidor', dados: { online: jogadoresOnline(), versao: '1.0.0' } });
+sinal(); setInterval(sinal, 60_000);
+process.on('SIGTERM', async () => { await painel({ tipo: 'servidor_parou' }); process.exit(0); });
+
+// 2) Quando acontecer algo no jogo (troque pelos dados reais):
+painel({ tipo: 'cadastro', usuario: 'uid123', nome: 'Sniper_BR', dados: { metodo: 'google' } });
+painel({ tipo: 'entrou', usuario: 'uid123' });          // ficou online
+painel({ tipo: 'saiu', usuario: 'uid123' });            // ficou offline
+painel({ tipo: 'assinatura', usuario: 'uid123', dados: { plano: 'mensal', valor: 19.9, status: 'ativa' } });
+painel({ tipo: 'transacao', usuario: 'uid123', dados: { valor: 4.9, item: '500 moedas' } });
+painel({ tipo: 'presente', usuario: 'uid123', dados: { para: 'LiaGamer', item: 'Rosa', valor: 1 } });
+painel({ tipo: 'partida', usuario: 'uid123', dados: { abates: 12, vitoria: true, minutos: 8, modo: 'Squad' } });`;
+  if (tipo === 'Outras (HTTP)') return `# Funciona em qualquer linguagem (Unity, Flutter, Android, Python, Godot…)
+# Envie até 200 eventos por vez.
+
+POST ${url}
+apikey: ${c.supabaseKey}
+Content-Type: application/json
+
+{
+  "chave": "${K}",
+  "eventos": [
+    { "tipo": "cadastro", "usuario": "uid123", "nome": "Sniper_BR", "plataforma": "Android", "dados": { "metodo": "google" } },
+    { "tipo": "transacao", "usuario": "uid123", "dados": { "valor": 4.9, "item": "500 moedas" } },
+    { "tipo": "servidor", "dados": { "online": 128 } }
+  ]
+}
+
+# Resposta: { "ok": true, "recebidos": 3 }
+# Chave errada ou desativada: erro 401.`;
+  return `<script>
+/* Painel de Projetos · cole antes de </body> no ${nome} */
+window.painel = (function () {
+  var URL = '${url}';
+  var API = '${c.supabaseKey}';
+  var CHAVE = '${K}';
+  var ls = window.localStorage, fila = [], timer = null;
+  var id = ls.getItem('painel_uid'), nome = ls.getItem('painel_nome') || '';
+  if (!id) { id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(); ls.setItem('painel_uid', id); }
+  var ua = navigator.userAgent, plat = /Android/i.test(ua) ? 'Android' : /iPhone|iPad/i.test(ua) ? 'iOS' : 'Web';
+  function enviar(fechando) {
+    clearTimeout(timer); timer = null;
+    while (fila.length) {
+      var lote = fila.splice(0, 100);
+      fetch(URL, { method: 'POST', keepalive: !!fechando, headers: { apikey: API, 'Content-Type': 'application/json' }, body: JSON.stringify({ chave: CHAVE, eventos: lote }) }).catch(function () {});
+    }
+  }
+  function evento(tipo, dados) {
+    fila.push({ tipo: tipo, usuario: id, nome: nome, plataforma: plat, dados: dados || {} });
+    if (!timer) timer = setTimeout(enviar, 1500);
+  }
+  if (!ls.getItem('painel_inst')) { ls.setItem('painel_inst', '1'); evento('instalar'); }
+  evento('abrir');
+  setInterval(function () { if (!document.hidden) evento('ping'); }, 60000);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { evento('saiu'); enviar(true); } else evento('ping'); });
+  window.addEventListener('error', function (e) { evento('erro', { mensagem: String(e.message).slice(0, 300) }); });
+  return {
+    // Depois do login: painel.identificar(user.uid, user.displayName)
+    identificar: function (novoId, novoNome) { if (novoId) { id = String(novoId); ls.setItem('painel_uid', id); } if (novoNome) { nome = String(novoNome); ls.setItem('painel_nome', nome); } evento('ping'); },
+    cadastro: function (metodo) { evento('cadastro', { metodo: metodo || 'email' }); },          // 'google', 'email'...
+    login: function (metodo) { evento('login', { metodo: metodo || 'email' }); },
+    assinatura: function (plano, valor, status) { evento('assinatura', { plano: plano, valor: valor, status: status || 'ativa' }); }, // 'mensal' | 'anual'
+    transacao: function (valor, item) { evento('transacao', { valor: valor, item: item }); },
+    presente: function (para, item, valor) { evento('presente', { para: para, item: item, valor: valor || 0 }); },
+    partida: function (abates, venceu, minutos, modo) { evento('partida', { abates: abates, vitoria: !!venceu, minutos: minutos, modo: modo || '' }); },
+    feedback: function (tipo, mensagem, contato) { evento('feedback', { tipo: tipo, mensagem: mensagem, contato: contato || '' }); },
+    evento: evento
+  };
+})();
+<\/script>`;
+}
+function renderAppCode() { $('acode').textContent = codeFor(appSel, appInt); }
+$('acopy').onclick = () => copy(codeFor(appSel, appInt), 'Código copiado');
 
 /* ================= Métricas ================= */
 function renderReports() {
@@ -451,6 +678,7 @@ function notify(title, body) {
   else { try { new Notification(title, opt); } catch (e) {} }
 }
 function onLive(t, row, force) {
+  if (t === 'eventos' && appD && !appD.erro && row.projeto_id === appD.pid && appD.eventos !== S.eventos) appD.eventos.unshift(row);
   const p = pname(row.projeto_id);
   if (t === 'feedback' && (prefs.nots.feedback || force)) notify(row.tipo === 'bug' ? 'Bug novo em ' + p : 'Sugestão nova em ' + p, row.mensagem);
   if (t === 'eventos' && row.tipo === 'cadastro' && prefs.nots.cadastro) notify('Novo cadastro', p + ' ganhou um usuário');
@@ -488,7 +716,7 @@ async function enter(session) {
 /* ================= Render geral ================= */
 function renderAll() {
   if ($('shell').hidden) return;
-  renderOverview(); renderProjects(); renderReports(); renderTasks(); renderBugs(); renderRanking(); renderUsers(); renderFinance(); renderIdeas(); renderAnns(); renderSettings();
+  renderOverview(); renderProjects(); renderReports(); renderTasks(); renderBugs(); renderRanking(); renderUsers(); renderFinance(); renderIdeas(); renderAnns(); renderSettings(); if (view === 'apps') renderApps();
   drawAll();
 }
 

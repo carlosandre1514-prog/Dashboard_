@@ -3,7 +3,7 @@ window.Store = (() => {
   const LIST = ['projetos', 'tarefas', 'versoes', 'ideias', 'receita', 'eventos', 'feedback'];
   const BACKUP = ['projetos', 'tarefas', 'versoes', 'ideias', 'receita'];
   const T = t => 'painel_' + t;
-  const state = {}; LIST.forEach(t => state[t] = []);
+  const state = { chaves: [], chavesErro: '' }; LIST.forEach(t => state[t] = []);
   let sb = null, mode = null;
   const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2) + Date.now());
 
@@ -44,14 +44,14 @@ window.Store = (() => {
   }
   async function signOut() {
     if (mode === 'sb') { try { await client().auth.signOut(); } catch (e) {} }
-    mode = null; LIST.forEach(t => state[t] = []);
+    mode = null; LIST.forEach(t => state[t] = []); state.chaves = []; memApps = null;
   }
   function useSb() { mode = 'sb'; }
   function useDemo() { mode = 'demo'; }
 
   /* ---------- Carregar ---------- */
   async function load() {
-    if (mode === 'demo') { Object.assign(state, demoLoad()); return state; }
+    if (mode === 'demo') { Object.assign(state, demoLoad()); await loadChaves(); return state; }
     const c = need();
     const since = new Date(); since.setMonth(since.getMonth() - 12);
     const tabs = ['projetos', 'tarefas', 'versoes', 'ideias', 'receita', 'feedback'];
@@ -67,6 +67,7 @@ window.Store = (() => {
       from += 1000;
     }
     state.eventos = ev;
+    await loadChaves();
     return state;
   }
 
@@ -90,8 +91,96 @@ window.Store = (() => {
   async function del(t, id) {
     if (mode !== 'demo') { const { error } = await need().from(T(t)).delete().eq('id', id); if (error) throw error; }
     state[t] = state[t].filter(r => r.id !== id);
-    if (t === 'projetos') ['tarefas', 'versoes', 'receita', 'eventos', 'feedback'].forEach(x => state[x] = state[x].filter(r => r.projeto_id !== id));
+    if (t === 'projetos') ['tarefas', 'versoes', 'receita', 'eventos', 'feedback', 'chaves'].forEach(x => state[x] = state[x].filter(r => r.projeto_id !== id));
     if (mode === 'demo') demoSave();
+  }
+
+  /* ---------- Apps conectados (chaves + dados de cada app) ---------- */
+  const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  const sha256 = async t => hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)));
+  function novaChave() { const b = new Uint8Array(24); crypto.getRandomValues(b); return 'pnl_' + hex(b); }
+  const CH_COLS = 'id,projeto_id,nome,prefixo,ativa,ultimo_uso,usos,criado_em';
+  async function loadChaves() {
+    if (mode === 'demo') { state.chaves = demoApps().chaves; state.chavesErro = ''; return; }
+    try {
+      const { data, error } = await need().from(T('chaves')).select(CH_COLS).order('criado_em', { ascending: false });
+      if (error) throw error; state.chaves = data; state.chavesErro = '';
+    } catch (e) { state.chaves = []; state.chavesErro = e.message || String(e); }
+  }
+  async function addChave(projeto_id, nome, chave) {
+    chave = String(chave).trim();
+    if (chave.length < 20 || chave.length > 200) throw new Error('A chave precisa ter entre 20 e 200 caracteres.');
+    const row = { projeto_id, nome: nome || 'Chave principal', prefixo: chave.slice(0, 8), hash: await sha256(chave) };
+    if (mode === 'demo') { const r = { id: uid(), ativa: true, usos: 0, ultimo_uso: null, criado_em: new Date().toISOString(), ...row }; delete r.hash; state.chaves.unshift(r); return r; }
+    const { data, error } = await need().from(T('chaves')).insert(row).select(CH_COLS).single();
+    if (error) throw new Error(error.code === '23505' ? 'Essa chave já está cadastrada.' : error.message);
+    state.chaves.unshift(data); return data;
+  }
+  async function updChave(id, patch) {
+    const row = state.chaves.find(r => r.id === id);
+    if (mode !== 'demo') { const { error } = await need().from(T('chaves')).update(patch).eq('id', id); if (error) throw error; }
+    Object.assign(row, patch); return row;
+  }
+  async function delChave(id) {
+    if (mode !== 'demo') { const { error } = await need().from(T('chaves')).delete().eq('id', id); if (error) throw error; }
+    state.chaves = state.chaves.filter(r => r.id !== id);
+  }
+  async function appLive(pid) {
+    if (mode === 'demo') { const d = demoApps().dados(pid); return { jogadores: d.jogadores, servidor: d.servidor }; }
+    const c = need();
+    const [j, s] = await Promise.all([
+      c.from(T('jogadores')).select('*').eq('projeto_id', pid).order('visto_em', { ascending: false }).limit(10000),
+      c.from(T('servidor')).select('*').eq('projeto_id', pid).maybeSingle()
+    ]);
+    if (j.error) throw j.error; if (s.error) throw s.error;
+    return { jogadores: j.data, servidor: s.data };
+  }
+  async function appData(pid) {
+    if (mode === 'demo') return demoApps().dados(pid);
+    const c = need(), since = new Date(Date.now() - 90 * 864e5).toISOString(), dia = new Date(Date.now() - 31 * 864e5).toISOString().slice(0, 10);
+    const [live, up] = await Promise.all([appLive(pid), c.from(T('uptime')).select('*').eq('projeto_id', pid).gte('dia', dia)]);
+    if (up.error) throw up.error;
+    let ev = [], from = 0;
+    for (;;) {
+      const { data, error } = await c.from(T('eventos')).select('*').eq('projeto_id', pid).gte('criado_em', since)
+        .order('criado_em', { ascending: false }).range(from, from + 999);
+      if (error) throw error;
+      ev = ev.concat(data);
+      if (data.length < 1000 || ev.length >= 30000) break;
+      from += 1000;
+    }
+    return { ...live, uptime: up.data, eventos: ev };
+  }
+
+  /* Dados de exemplo dos apps conectados (só no modo demonstração) */
+  let memApps = null;
+  function demoApps() {
+    if (memApps) return memApps;
+    let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const pick = a => a[Math.floor(rnd() * a.length)], now = Date.now(), DAY = 864e5, iso = ms => new Date(ms).toISOString();
+    const pid = (state.projetos.find(p => p.nome === 'Favela Game') || state.projetos[0] || {}).id;
+    const NOMES = ['Sniper_BR', 'LiaGamer', 'MCzinho', 'Tropa_do_K', 'Dona_Bala', 'ZéPistola', 'Fumaça', 'Mano_RJ', 'Vapor', 'Neguin_SP', 'Kaká', 'Brabo10', 'Rato_Cinza', 'Bia_Fps', 'Tigrão'];
+    const jog = [], ev = [], up = [];
+    for (let i = 0; i < 260; i++) {
+      const first = now - rnd() * 88 * DAY, seen = Math.min(now, first + rnd() * 40 * DAY), on = rnd() < .09;
+      const nome = i < NOMES.length ? NOMES[i] : pick(NOMES) + (100 + i), metodo = rnd() < .62 ? 'google' : rnd() < .7 ? 'email' : 'anonimo';
+      const plano = rnd() < .14 ? (rnd() < .7 ? 'mensal' : 'anual') : '', valor = plano === 'anual' ? 199.9 : plano ? 19.9 : 0;
+      const j = { projeto_id: pid, usuario: 'u' + i, nome, plataforma: pick(['Android', 'Android', 'Android', 'iOS', 'Web']), metodo, plano, plano_valor: valor, plano_status: plano ? (rnd() < .85 ? 'ativa' : 'cancelada') : '', plano_expira: plano ? iso(now + (rnd() * (plano === 'anual' ? 300 : 28) - 3) * DAY) : null, gasto: valor, partidas: 0, primeiro_em: iso(first), visto_em: iso(on ? now - rnd() * 60e3 : seen), online_ate: on ? iso(now + 90e3) : null };
+      jog.push(j);
+      ev.push({ id: 'e' + ev.length, projeto_id: pid, tipo: 'cadastro', usuario: j.usuario, plataforma: j.plataforma, dados: { metodo, nome }, criado_em: j.primeiro_em });
+      if (plano) ev.push({ id: 'e' + ev.length, projeto_id: pid, tipo: 'assinatura', usuario: j.usuario, plataforma: j.plataforma, dados: { plano, valor, status: 'ativa', nome }, criado_em: iso(first + rnd() * (now - first)) });
+      const nt = Math.floor(rnd() * rnd() * 6);
+      for (let t = 0; t < nt; t++) { const it = pick([['100 moedas', 4.9], ['500 moedas', 19.9], ['Skin Dourada', 9.9], ['Passe de batalha', 14.9]]); j.gasto += it[1]; ev.push({ id: 'e' + ev.length, projeto_id: pid, tipo: 'transacao', usuario: j.usuario, plataforma: j.plataforma, dados: { valor: it[1], item: it[0], nome }, criado_em: iso(first + rnd() * (now - first)) }); }
+      const np = Math.floor(rnd() * 14);
+      for (let t = 0; t < np; t++) { j.partidas++; ev.push({ id: 'e' + ev.length, projeto_id: pid, tipo: 'partida', usuario: j.usuario, plataforma: j.plataforma, dados: { nome, abates: Math.floor(rnd() * 20), vitoria: rnd() < .4, minutos: 4 + Math.floor(rnd() * 12), modo: pick(['Solo', 'Dupla', 'Squad']) }, criado_em: iso(first + rnd() * (now - first)) }); }
+      if (rnd() < .25) ev.push({ id: 'e' + ev.length, projeto_id: pid, tipo: 'presente', usuario: j.usuario, plataforma: j.plataforma, dados: { nome, para: pick(NOMES), item: pick(['Rosa', 'Caixa surpresa', 'Diamante', 'Coroa']), valor: pick([1, 2, 5, 10]) }, criado_em: iso(first + rnd() * (now - first)) });
+    }
+    for (let d = 30; d >= 0; d--) up.push({ projeto_id: pid, dia: new Date(now - d * DAY).toISOString().slice(0, 10), segundos: d === 0 ? Math.round((new Date().getHours() + new Date().getMinutes() / 60) * 3600) : Math.round((rnd() < .1 ? 14 + rnd() * 8 : 23 + rnd()) * 3600), pico_online: 20 + Math.floor(rnd() * 40) });
+    ev.sort((a, b) => b.criado_em.localeCompare(a.criado_em));
+    const servidor = { projeto_id: pid, online: jog.filter(j => j.online_ate).length, ativo: true, ativo_desde: iso(now - 5.3 * 3600e3), ultimo_sinal: iso(now - 20e3), versao: '0.3.0', dados: {} };
+    memApps = { chaves: pid ? [{ id: 'k1', projeto_id: pid, nome: 'Servidor do jogo', prefixo: 'pnl_8f3a', ativa: true, usos: 18342, ultimo_uso: iso(now - 20e3), criado_em: iso(now - 60 * DAY) }] : [],
+      dados: p => p === pid ? { jogadores: jog, servidor, uptime: up, eventos: ev } : { jogadores: [], servidor: null, uptime: [], eventos: [] } };
+    return memApps;
   }
 
   /* ---------- Tempo real ---------- */
@@ -189,7 +278,7 @@ window.Store = (() => {
     return { projetos: P, tarefas, versoes, ideias, receita, eventos: ev, feedback };
   }
 
-  return { state, session, signIn, signUp, google, signOut, useSb, useDemo, load, add, addMany, upd, del, live, inject, backup, restore, demoReset, get mode() { return mode; }, get ready() { return !!client(); } };
+  return { state, session, signIn, signUp, google, signOut, novaChave, addChave, updChave, delChave, loadChaves, appData, appLive, useSb, useDemo, load, add, addMany, upd, del, live, inject, backup, restore, demoReset, get mode() { return mode; }, get ready() { return !!client(); } };
 })();
 
 /* Seus projetos (usados na importação e na demonstração) */

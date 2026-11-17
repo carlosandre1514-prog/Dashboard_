@@ -72,6 +72,52 @@
   <div class="team" id="projs"></div>
  </section>
 
+ <section class="view" id="v-apps">
+  <div class="head"><div><h1>Apps conectados</h1><p id="asum">Dados ao vivo dos seus apps e jogos, enviados com uma chave de acesso</p></div>
+   <div class="row2" style="flex:0 1 520px"><select class="inp" id="aproj" aria-label="App conectado"></select><button class="btn pri" style="flex:0 0 auto" id="aNew">+ Conectar app</button></div></div>
+  <p class="msg" id="aerr" hidden></p>
+
+  <form class="c glass" id="acf" hidden><h3 style="margin:0 0 4px;font-size:16px">Conectar um app ou jogo</h3>
+   <p style="color:var(--mut);margin:0 0 12px;font-size:14px">A chave liga o app ao painel. O app usa ela para enviar os dados, e tudo aparece aqui.</p>
+   <div class="row2"><select class="inp" id="acp" aria-label="Projeto" required></select><input class="inp" id="acn" placeholder="Nome da chave (ex.: Servidor do jogo)" maxlength="60" aria-label="Nome da chave"></div>
+   <div class="seg" id="acm" style="margin-top:10px;width:max-content;max-width:100%"><button type="button" class="on">Gerar chave</button><button type="button">Colar minha chave</button></div>
+   <input class="inp" id="ack" placeholder="Cole aqui a sua chave (mínimo 20 caracteres)" minlength="20" maxlength="200" autocomplete="off" spellcheck="false" style="margin-top:10px" hidden aria-label="Sua chave">
+   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn pri">Conectar</button><button class="btn" type="button" id="acx">Cancelar</button></div></form>
+
+  <div class="c glass reveal" id="arev" hidden></div>
+
+  <div class="c glass" id="aempty" hidden><h3 style="margin:0 0 6px;font-size:18px">Nenhum app conectado ainda</h3>
+   <ol class="steps"><li><b>Conecte um projeto</b> e o painel gera uma chave de acesso só dele.</li><li><b>Coloque a chave no app ou no servidor do jogo</b>, usando o código pronto que aparece aqui.</li><li><b>Pronto:</b> jogadores, online agora, assinaturas, transações, presentes, partidas e o tempo do servidor ativo aparecem nesta tela, ao vivo.</li></ol>
+   <button class="btn pri" id="aFirst">Conectar meu primeiro app</button></div>
+
+  <div id="abody" hidden>
+   <div class="c glass srv" id="asrv"></div>
+   <div class="grid" id="aplayers"></div>
+   <div class="grid" id="amoney"></div>
+   <div class="grid">
+    <div class="c glass span3"><div class="ch"><div><h3>Receita por dia</h3><small id="arevTot">Últimos 30 dias</small></div></div><div class="fig"><svg id="arevc"></svg></div></div>
+    <div class="c glass side"><div class="ch"><div><h3>Cadastros por método</h3><small>Como os jogadores entram</small></div></div><div class="rank" id="ametodo"></div>
+     <div class="ch" style="margin:18px 0 10px"><div><h3>Assinantes ativos</h3><small id="aplanTot"></small></div></div><div class="rank" id="aplanos"></div></div>
+   </div>
+   <div class="grid" id="agame"></div>
+   <div class="grid">
+    <div class="c glass span2"><div class="ch"><div><h3>Servidor ativo</h3><small id="aupTot">Horas por dia · 30 dias</small></div></div><div class="fig" style="min-height:200px"><svg id="aupc"></svg></div></div>
+    <div class="c glass span2"><div class="ch"><div><h3>Novos jogadores</h3><small id="anewTot">Por dia · 30 dias</small></div></div><div class="fig" style="min-height:200px"><svg id="anewc"></svg></div></div>
+   </div>
+   <div class="c glass"><div class="ch"><div class="seg scroll" id="atab"><button class="on">Jogadores</button><button>Assinaturas</button><button>Transações</button><button>Presentes</button><button>Partidas</button><button>Eventos</button></div>
+    <div class="row2" style="flex:0 1 380px"><input class="inp" id="aq" placeholder="Buscar…" aria-label="Buscar na tabela"><button class="btn" style="flex:0 0 auto" id="acsv">CSV</button></div></div>
+    <small id="atabSum" style="color:var(--mut);display:block;margin:-4px 0 6px"></small>
+    <div class="tscroll"><table class="stack"><thead id="athead"></thead><tbody id="atbody"></tbody></table></div></div>
+   <div class="grid">
+    <div class="c glass span2"><div class="ch"><div><h3>Chaves de acesso</h3><small>Cada chave só consegue enviar dados para este app</small></div><button class="mini" id="aKeyNew">+ Nova chave</button></div><div id="akeys"></div></div>
+    <div class="c glass span2"><div class="ch"><div><h3>Como ligar o app</h3><small>Código pronto para copiar</small></div></div>
+     <div class="seg" id="aint" style="width:max-content;max-width:100%"><button class="on">Site / HTML</button><button>Servidor Node</button><button>Outras (HTTP)</button></div>
+     <pre class="code" id="acode"></pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="acopy">Copiar código</button></div>
+     <details class="tipos"><summary>Tipos de dados que o painel entende</summary><div id="atipos"></div></details></div>
+   </div>
+  </div>
+ </section>
+
  <section class="view" id="v-reports">
   <div class="head"><div><h1>Métricas</h1><p>Dados enviados pelos seus apps nos últimos 12 meses</p></div>
    <select class="inp" id="rproj" style="width:auto" aria-label="Projeto"></select></div>
