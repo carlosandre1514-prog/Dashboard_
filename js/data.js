@@ -29,6 +29,14 @@ window.Store = (() => {
     if (error) throw error; if (data.session) mode = 'sb'; return data;
   }
   async function google() {
+    // Confere antes se o Google está ligado no Supabase; senão o navegador sai do painel e mostra um erro em JSON.
+    const c = window.PAINEL_CONFIG;
+    let ext = null;
+    try {
+      const r = await fetch(c.supabaseUrl + '/auth/v1/settings', { headers: { apikey: c.supabaseKey } });
+      if (r.ok) ext = (await r.json()).external || null;
+    } catch (e) {}
+    if (ext && !ext.google) throw new Error('Unsupported provider: provider is not enabled');
     const { error } = await need().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href.split('#')[0] } });
     if (error) throw error;
   }
