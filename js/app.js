@@ -244,7 +244,7 @@ $('dpanel').onchange = e => { const t = e.target.dataset.tk; if (t) act(async ()
 async function copy(text, ok) { try { await navigator.clipboard.writeText(text); toast(ok); } catch (e) { toast('Não deu para copiar. Segure no texto e copie à mão.'); } }
 
 /* ================= Apps conectados ================= */
-let appSel = '', appD = null, appTab = 'Jogadores', appInt = 'Site / HTML', chaveNova = null, keyDel = null, acMode = 'Gerar chave';
+let appSel = '', appD = null, appTab = 'Jogadores', appInt = 'Prompt para IA', chaveNova = null, keyDel = null, acMode = 'Gerar chave';
 const isOn = j => !!j.online_ate && new Date(j.online_ate) > Date.now();
 const srvOn = s => !!(s && s.ativo && s.ultimo_sinal && Date.now() - new Date(s.ultimo_sinal) < 3 * 60e3);
 const dur = sec => { sec = Math.max(0, Math.floor(sec)); const d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60); return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + String(m).padStart(2, '0') + 'min' : m + ' min'; };
@@ -404,6 +404,7 @@ seg('aint', t => { appInt = t; renderAppCode(); });
 const keyFor = pid => chaveNova && chaveNova.pid === pid ? chaveNova.chave : 'COLE_SUA_CHAVE_AQUI';
 function codeFor(pid, tipo) {
   const c = window.PAINEL_CONFIG, url = c.supabaseUrl + '/rest/v1/rpc/painel_enviar', K = keyFor(pid), nome = pname(pid);
+  if (tipo === 'Prompt para IA') return promptIA(url, c.supabaseKey, K, nome, proj(pid)?.tipo);
   if (tipo === 'Servidor Node') return `// Painel de Projetos · servidor do ${nome} (Node 18+)
 // Guarde a chave numa variável de ambiente: PAINEL_CHAVE=${K}
 const PAINEL_URL = '${url}';
@@ -490,8 +491,57 @@ window.painel = (function () {
 })();
 <\/script>`;
 }
-function renderAppCode() { $('acode').textContent = codeFor(appSel, appInt); }
-$('acopy').onclick = () => copy(codeFor(appSel, appInt), 'Código copiado');
+function promptIA(url, api, chave, nome, tipo) {
+  return `Quero ligar este projeto (${nome}${tipo ? ', ' + tipo.toLowerCase() : ''}) ao meu painel de métricas. Faça a integração completa no código, seguindo as regras abaixo.
+
+## Como enviar os dados
+Faça POST para:
+${url}
+
+Cabeçalhos:
+apikey: ${api}
+Content-Type: application/json
+
+Corpo (JSON):
+{ "chave": "${chave}", "eventos": [ { "tipo": "...", "usuario": "id do usuário", "nome": "nome de exibição", "plataforma": "Android | iOS | Web | PC", "dados": { ... } } ] }
+
+- Resposta de sucesso: {"ok": true, "recebidos": N}. Chave errada ou desativada: erro 401.
+- Máximo de 200 eventos por envio. Agrupe eventos em lotes (a cada 1 a 2 segundos) em vez de um envio por evento.
+- O envio nunca pode travar nem quebrar o app: faça de forma assíncrona, ignore erros de rede e não mostre nada ao usuário.
+- Valores em reais (número, ex.: 19.9).
+- "usuario" deve ser o id fixo do usuário (ex.: uid do Firebase/Supabase/Google). Antes do login, use um id anônimo salvo no aparelho e troque pelo id real depois do login.
+
+## Eventos que o painel entende (tipo → dados)
+- instalar → {} (só na primeira vez que o app abre no aparelho)
+- abrir → {} (toda vez que o app abre)
+- ping → {} (a cada 60 segundos enquanto o usuário está com o app aberto e visível: mantém ele como ONLINE)
+- saiu → {} (quando o usuário fecha ou minimiza o app: marca como OFFLINE)
+- entrou → {} (jogador conectou no servidor do jogo: marca como ONLINE)
+- cadastro → { "metodo": "google" | "email" | "apple" | "anonimo" }
+- login → { "metodo": "google" | "email" | ... }
+- assinatura → { "plano": "mensal" | "anual" | "semanal", "valor": 19.9, "status": "ativa" | "renovada" | "cancelada" | "expirada" | "reembolsada", "expira_em": "data ISO (opcional)" }
+- transacao → { "valor": 4.9, "item": "500 moedas", "tipo": "compra" | "reembolso" }
+- presente → { "para": "nome ou id de quem recebeu", "item": "Rosa", "valor": 1 }
+- partida → { "abates": 12, "vitoria": true, "minutos": 8, "modo": "Squad" }
+- erro → { "mensagem": "texto do erro" } (capture erros não tratados)
+- feedback → { "tipo": "bug" | "sugestao", "mensagem": "...", "contato": "..." }
+- servidor → { "online": número de jogadores conectados agora, "versao": "1.0.0" } (SÓ no servidor, a cada 60 segundos; não precisa de "usuario")
+- servidor_parou → {} (quando o servidor desligar)
+- Qualquer outro evento importante do projeto: invente um tipo em minúsculas com _ (ex.: "nivel_concluido") e mande os detalhes em "dados".
+
+## O que fazer
+1. Veja a tecnologia do projeto (site, app, jogo, com ou sem servidor) e crie um módulo/arquivo único de integração (ex.: painel.js, Painel.cs, painel.dart) com uma função para enviar eventos com fila e lotes.
+2. Envie automaticamente: instalar, abrir, ping a cada 60 s, saiu, e erro.
+3. Procure no código onde acontecem: cadastro e login (com o método), assinaturas/pagamentos, compras, envio de presentes, partidas, e conexão/desconexão de jogadores. Chame o evento certo em cada lugar, com os dados reais.
+4. Se o projeto tiver servidor (Node, Python, etc.), envie de lá o evento "servidor" a cada 60 segundos com o número de jogadores online, e "servidor_parou" ao desligar. Pagamentos e assinaturas devem ser enviados preferencialmente pelo servidor, depois de confirmados.
+5. Segurança: se houver servidor, guarde a chave em variável de ambiente (PAINEL_CHAVE) e não deixe ela no código público. Se o projeto for só front-end, pode deixar a chave no código.
+6. Não mande senhas, e-mails, CPF ou dados de cartão nos eventos.
+7. No fim, me diga em quais arquivos e lugares você colocou cada evento, e o que eu preciso fazer (se precisar de algo).
+
+Chave deste projeto: ${chave}`;
+}
+function renderAppCode() { const pr = appInt === 'Prompt para IA'; $('acode').textContent = codeFor(appSel, appInt); $('acode').style.whiteSpace = pr ? 'pre-wrap' : ''; $('acopy').textContent = pr ? 'Copiar prompt' : 'Copiar código'; }
+$('acopy').onclick = () => copy(codeFor(appSel, appInt), appInt === 'Prompt para IA' ? 'Prompt copiado. Cole na IA do seu projeto.' : 'Código copiado');
 
 /* ================= Métricas ================= */
 function renderReports() {
