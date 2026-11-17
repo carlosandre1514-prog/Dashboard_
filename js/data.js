@@ -22,7 +22,7 @@ window.Store = (() => {
   }
   // Painel de um dono só: o código de acesso é a senha da conta única. A sessão some quando o app é fechado.
   async function signIn(code) {
-    const password = String(code).replace(/\s+/g, '').toUpperCase();
+    const password = String(code).replace(/\s+/g, '');
     const { data, error } = await need().auth.signInWithPassword({ email: window.PAINEL_CONFIG.email, password });
     if (error) throw error; mode = 'sb'; return data.session;
   }
