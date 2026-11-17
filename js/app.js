@@ -410,10 +410,10 @@ function applyPrefs() {
 function renderSettings() {
   $('pn').value = prefs.nome; $('pg').value = prefs.github; $('pm').value = prefs.meta;
   $('sname').textContent = prefs.nome; $('smail').textContent = email; $('sav').textContent = ini(prefs.nome);
-  $('uname').textContent = prefs.nome; $('umail').textContent = Store.mode === 'demo' ? 'Modo demonstração' : email; $('uav').textContent = ini(prefs.nome);
+  $('uname').textContent = prefs.nome; $('umail').textContent = Store.mode === 'demo' ? 'Modo demonstração' : 'Acesso por código'; $('uav').textContent = ini(prefs.nome);
   $('ghLink').href = 'https://github.com/' + encodeURIComponent(prefs.github);
-  $('logout').textContent = Store.mode === 'demo' ? 'Sair da demonstração' : 'Sair da conta';
-  $('foot').textContent = Store.mode === 'demo' ? 'Modo demonstração: dados de exemplo salvos só neste navegador.' : 'Conectado ao Supabase como ' + email + '.';
+  $('logout').textContent = Store.mode === 'demo' ? 'Sair da demonstração' : 'Bloquear painel';
+  $('foot').textContent = Store.mode === 'demo' ? 'Modo demonstração: dados de exemplo salvos só neste navegador.' : 'Conectado ao Supabase. O painel bloqueia quando o app é fechado.';
   const N = [['cadastro', 'Novo cadastro', 'Quando alguém cria conta num app'], ['erro', 'Erros', 'Quando um app dá erro'], ['feedback', 'Bugs e sugestões', 'Quando chega uma mensagem nova']];
   $('nots').innerHTML = N.map(([k, t, d]) => `<label class="sw"><span><b>${t}</b><small>${d}</small></span><input type="checkbox" class="tg" data-n="${k}" ${prefs.nots[k] ? 'checked' : ''}></label>`).join('');
   const perm = 'Notification' in window ? Notification.permission : 'unsupported';
@@ -431,7 +431,7 @@ $('testN').onclick = () => {
   if (Store.mode === 'demo') Store.inject('feedback', row);
   onLive('feedback', row, true);
 };
-$('logout').onclick = async () => { await Store.signOut(); location.hash = ''; showLogin(); };
+$('logout').onclick = async () => { await Store.signOut(); location.hash = ''; showLogin(); $('lp').focus(); };
 $('exitDemo').onclick = $('logout').onclick;
 $('expBtn').onclick = () => download('painel-backup-' + today() + '.json', JSON.stringify(Store.backup(), null, 1), 'application/json');
 $('copyBtn').onclick = () => copy(JSON.stringify(Store.backup()), 'Backup copiado. Cole num arquivo .json para guardar.');
@@ -465,28 +465,17 @@ function showLogin(msg, ok) {
 }
 function loginErr(e) {
   const m = String(e?.message || e);
-  if (/Invalid login/i.test(m)) return 'E-mail ou senha errados.';
-  if (/not confirmed/i.test(m)) return 'Confirme seu e-mail primeiro (veja a caixa de entrada e o spam).';
-  if (/already registered/i.test(m)) return 'Esse e-mail já tem conta. Use "Entrar".';
-  if (/provider is not enabled/i.test(m)) return 'O login com Google ainda não foi ligado no Supabase (veja o LEIAME).';
-  if (/fetch|network|carregar o Supabase/i.test(m)) return 'Sem conexão com o Supabase daqui. Se você está vendo pelo Claude, use o modo demonstração. Na versão publicada no GitHub Pages o login funciona.';
+  if (/Invalid login/i.test(m)) return 'Código errado.';
+  if (/fetch|network|carregar o Supabase/i.test(m)) return 'Sem conexão com o Supabase. Verifique a internet.';
   return m;
 }
 const busy = (b, on) => { b.disabled = on; b.style.opacity = on ? .6 : 1; };
 $('lf').onsubmit = async e => {
   e.preventDefault(); busy($('lbtn'), true);
-  try { const s = await Store.signIn($('le').value.trim(), $('lp').value); await enter(s); }
-  catch (er) { showLogin(loginErr(er)); }
+  try { const s = await Store.signIn($('lp').value); $('lp').value = ''; await enter(s); }
+  catch (er) { showLogin(loginErr(er)); $('lp').select(); }
   busy($('lbtn'), false);
 };
-$('lsign').onclick = async () => {
-  if (!$('lf').reportValidity()) return; busy($('lsign'), true);
-  try { const r = await Store.signUp($('le').value.trim(), $('lp').value); if (r.session) await enter(r.session); else showLogin('Conta criada! Abra o link que chegou no seu e-mail e depois toque em "Entrar".', true); }
-  catch (er) { showLogin(loginErr(er)); }
-  busy($('lsign'), false);
-};
-$('lgoogle').onclick = async () => { try { await Store.google(); } catch (er) { showLogin(loginErr(er)); } };
-$('ldemo').onclick = () => { Store.useDemo(); enter(null); };
 
 async function enter(session) {
   email = session?.user?.email || '';
@@ -516,6 +505,6 @@ new MutationObserver(() => { for (const c of document.querySelectorAll('.stack t
   applyPrefs();
   const s = await Store.session();
   if (s) { Store.useSb(); await enter(s); }
-  else showLogin();
+  else { showLogin(); $('lp').focus(); }
 })();
 }

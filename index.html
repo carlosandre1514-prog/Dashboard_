@@ -19,17 +19,11 @@
  <div class="box glass">
   <div class="logo">CA</div>
   <h1>Painel de Projetos</h1>
-  <p>Entre para ver seus apps e jogos.</p>
+  <p>Digite o código de acesso.</p>
   <form id="lf">
-   <input class="inp" id="le" type="email" placeholder="E-mail" autocomplete="email" required aria-label="E-mail">
-   <input class="inp" id="lp" type="password" placeholder="Senha (mínimo 6 letras)" autocomplete="current-password" required minlength="6" aria-label="Senha">
-   <button class="btn pri" id="lbtn">Entrar</button>
+   <input class="inp" id="lp" type="password" placeholder="Código de acesso" autocomplete="current-password" autocapitalize="characters" spellcheck="false" required aria-label="Código de acesso">
+   <button class="btn pri" id="lbtn">Abrir painel</button>
   </form>
-  <div class="alt">
-   <button class="btn" id="lsign">Criar conta</button>
-   <button class="btn" id="lgoogle">Entrar com Google</button>
-   <button class="btn" id="ldemo">Ver modo demonstração</button>
-  </div>
   <p class="msg" id="lmsg" hidden style="margin:14px 0 0"></p>
  </div>
 </div>
@@ -150,7 +144,7 @@
     <label class="lbl" for="pn">Nome que aparece no painel</label><input class="inp" id="pn" maxlength="60">
     <label class="lbl" for="pg">Usuário do GitHub</label><input class="inp" id="pg" maxlength="60">
     <label class="lbl" for="pm">Meta de receita por mês (R$)</label><input class="inp" id="pm" type="number" min="1" step="1">
-    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="saveP">Salvar</button><button class="btn" id="logout">Sair da conta</button></div></div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="saveP">Salvar</button><button class="btn" id="logout">Bloquear painel</button></div></div>
    <div class="c glass span2"><h3 style="margin:0 0 6px;font-size:16px">Aparência</h3>
     <label class="sw"><span><b>Modo claro</b><small>Fundo claro em vez de escuro</small></span><input type="checkbox" class="tg" id="modo"></label>
     <h3 style="margin:14px 0 10px;font-size:16px">Cor de destaque</h3><div class="sws" id="sws"></div>

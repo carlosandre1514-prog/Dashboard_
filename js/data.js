@@ -11,7 +11,7 @@ window.Store = (() => {
     if (sb) return sb;
     const c = window.PAINEL_CONFIG;
     if (!window.supabase || !c) return null;
-    try { sb = window.supabase.createClient(c.supabaseUrl, c.supabaseKey); } catch (e) { sb = null; }
+    try { sb = window.supabase.createClient(c.supabaseUrl, c.supabaseKey, { auth: { storage: window.sessionStorage } }); } catch (e) { sb = null; }
     return sb;
   }
   const need = () => { const c = client(); if (!c) throw new Error('Não deu para carregar o Supabase. Verifique a internet.'); return c; };
@@ -20,8 +20,10 @@ window.Store = (() => {
     const c = client(); if (!c) return null;
     try { const { data } = await c.auth.getSession(); return data.session; } catch (e) { return null; }
   }
-  async function signIn(email, password) {
-    const { data, error } = await need().auth.signInWithPassword({ email, password });
+  // Painel de um dono só: o código de acesso é a senha da conta única. A sessão some quando o app é fechado.
+  async function signIn(code) {
+    const password = String(code).replace(/\s+/g, '').toUpperCase();
+    const { data, error } = await need().auth.signInWithPassword({ email: window.PAINEL_CONFIG.email, password });
     if (error) throw error; mode = 'sb'; return data.session;
   }
   async function signUp(email, password) {
