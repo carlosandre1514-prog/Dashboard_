@@ -193,3 +193,10 @@ revoke all on function painel_priv.ts(text) from public;
 -- Agora os apps só enviam dados com chave (fecha o envio aberto antigo)
 drop policy if exists "apps enviam eventos" on public.painel_eventos;
 drop policy if exists "apps enviam feedback" on public.painel_feedback;
+
+-- Libera os novos tipos de evento e aumenta alguns limites da tabela antiga
+alter table public.painel_eventos drop constraint if exists painel_eventos_tipo_check, add constraint painel_eventos_tipo_check check (tipo ~ '^[a-z_]{2,30}$');
+alter table public.painel_eventos drop constraint if exists painel_eventos_plataforma_check, add constraint painel_eventos_plataforma_check check (char_length(plataforma) <= 30);
+alter table public.painel_eventos drop constraint if exists painel_eventos_usuario_check, add constraint painel_eventos_usuario_check check (char_length(usuario) <= 100);
+alter table public.painel_eventos drop constraint if exists painel_eventos_dados_check, add constraint painel_eventos_dados_check check (pg_column_size(dados) < 8000);
+alter table public.painel_feedback drop constraint if exists painel_feedback_contato_check, add constraint painel_feedback_contato_check check (char_length(contato) <= 200);
