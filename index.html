@@ -66,8 +66,8 @@
 
  <section class="view" id="v-projects">
   <div class="head"><div><h1>Projetos</h1><p id="psum"></p></div>
-   <div class="row2" style="flex:0 1 560px"><div class="seg" id="pk" style="flex:0 0 auto"><button class="on">Todos</button><button>Jogos</button><button>Apps</button></div><button class="btn pri" style="flex:0 0 auto" id="newBtn">+ Novo projeto</button></div></div>
-  <form class="c glass" id="nf" hidden><h3 style="margin:0 0 10px;font-size:16px">Novo projeto</h3><div class="row2"><input class="inp" id="nn" placeholder="Nome do projeto" required maxlength="80" aria-label="Nome"><select class="inp" id="nk" aria-label="Tipo"><option>App</option><option>Jogo</option></select><input class="inp" id="ns" placeholder="Tecnologia (ex.: Flutter)" maxlength="120" aria-label="Tecnologia"><input class="inp" id="ng" placeholder="Repositório (usuario/repo)" maxlength="120" aria-label="Repositório do GitHub"><button class="btn pri" style="flex:0 0 auto">Criar</button></div></form>
+   <div class="row2" style="flex:0 1 640px"><div class="seg" id="pk" style="flex:0 0 auto"><button class="on">Todos</button><button>Jogos</button><button>Apps</button><button>Sites</button></div><button class="btn pri" style="flex:0 0 auto" id="newBtn">+ Novo projeto</button></div></div>
+  <form class="c glass" id="nf" hidden><h3 style="margin:0 0 10px;font-size:16px">Novo projeto</h3><div class="row2"><input class="inp" id="nn" placeholder="Nome do projeto" required maxlength="80" aria-label="Nome"><select class="inp" id="nk" aria-label="Tipo"><option>App</option><option>Jogo</option><option value="Site">Site / Web app</option></select><input class="inp" id="ns" placeholder="Tecnologia (ex.: Flutter)" maxlength="120" aria-label="Tecnologia"><input class="inp" id="ng" placeholder="Repositório (usuario/repo)" maxlength="120" aria-label="Repositório do GitHub"><button class="btn pri" style="flex:0 0 auto">Criar</button></div></form>
   <div class="c glass" id="importBox" hidden><b>Nenhum projeto ainda.</b><p style="color:var(--mut);margin:6px 0 12px">Quer importar seus 12 projetos (Favela Game, Manhwa Toons, Agenda Barba e os outros) para começar?</p><button class="btn pri" id="importBtn">Importar meus projetos</button></div>
   <div class="team" id="projs"></div>
  </section>
@@ -168,9 +168,9 @@
  </section>
 
  <section class="view" id="v-ideas">
-  <div class="head"><div><h1>Ideias e roteiros</h1><p>Jogos, apps e histórias antes de virarem projeto</p></div>
-   <div class="seg" id="if"><button class="on">Todas</button><button>Jogo</button><button>App</button><button>Manhwa</button><button>Outro</button></div></div>
-  <form class="c glass" id="idf"><div class="row2"><input class="inp" id="it" placeholder="Título da ideia" required maxlength="120" aria-label="Título"><select class="inp" id="ic" aria-label="Categoria"><option>Jogo</option><option>App</option><option>Manhwa</option><option>Outro</option></select></div><textarea class="inp" id="ix" placeholder="Descreva a ideia, o roteiro ou os personagens…" maxlength="5000" style="margin-top:10px" aria-label="Descrição"></textarea><div style="margin-top:10px"><button class="btn pri">Salvar ideia</button></div></form>
+  <div class="head"><div><h1>Ideias e roteiros</h1><p>Jogos, apps, sites e histórias antes de virarem projeto</p></div>
+   <div class="seg" id="if"><button class="on">Todas</button><button>Jogo</button><button>App</button><button>Site</button><button>Manhwa</button><button>Outro</button></div></div>
+  <form class="c glass" id="idf"><div class="row2"><input class="inp" id="it" placeholder="Título da ideia" required maxlength="120" aria-label="Título"><select class="inp" id="ic" aria-label="Categoria"><option>Jogo</option><option>App</option><option>Site</option><option>Manhwa</option><option>Outro</option></select></div><textarea class="inp" id="ix" placeholder="Descreva a ideia, o roteiro ou os personagens…" maxlength="5000" style="margin-top:10px" aria-label="Descrição"></textarea><div style="margin-top:10px"><button class="btn pri">Salvar ideia</button></div></form>
   <div class="team" id="ideas"></div>
  </section>
 

@@ -200,3 +200,7 @@ alter table public.painel_eventos drop constraint if exists painel_eventos_plata
 alter table public.painel_eventos drop constraint if exists painel_eventos_usuario_check, add constraint painel_eventos_usuario_check check (char_length(usuario) <= 100);
 alter table public.painel_eventos drop constraint if exists painel_eventos_dados_check, add constraint painel_eventos_dados_check check (pg_column_size(dados) < 8000);
 alter table public.painel_feedback drop constraint if exists painel_feedback_contato_check, add constraint painel_feedback_contato_check check (char_length(contato) <= 200);
+
+-- Tipo "Site" para projetos e ideias
+alter table public.painel_projetos drop constraint if exists painel_projetos_tipo_check, add constraint painel_projetos_tipo_check check (tipo = any (array['App','Jogo','Site']));
+alter table public.painel_ideias drop constraint if exists painel_ideias_categoria_check, add constraint painel_ideias_categoria_check check (categoria = any (array['Jogo','App','Site','Manhwa','Outro']));
