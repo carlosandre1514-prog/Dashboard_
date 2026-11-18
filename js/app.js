@@ -35,6 +35,8 @@ const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const stat = ([ic, v, l, ch]) => `<div class="c glass stat"><div class="row"><div class="ico">${svg(ic)}</div>${ch ? `<span class="chip ${String(ch)[0] === '-' ? 'dn' : 'up'}">${ch}</span>` : ''}</div><div class="v">${v}</div><div class="l">${l}</div></div>`;
 const TIPO_IC = { Jogo: 'game', App: 'phone', Site: 'globe' }, tipoIc = t => TIPO_IC[t] || 'phone';
 const TIPO_NOME = t => t === 'Site' ? 'Site / Web app' : t;
+const picon = p => p.icone ? `<img src="${esc(p.icone)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove('has-img');this.nextElementSibling.hidden=false;this.remove()"><span hidden>${svg(tipoIc(p.tipo))}</span>` : svg(tipoIc(p.tipo));
+const icoBox = (p, st) => `<div class="ico${p.icone ? ' has-img' : ''}"${st ? ` style="${st}"` : ''}>${picon(p)}</div>`;
 const STS = ['Ideia', 'Em desenvolvimento', 'Lançado'], STC = ['rgba(150,170,175,.9)', '#fbbf24', '#34d399'];
 const PR = { a: 'Alta', m: 'Média', b: 'Baixa' }, COLS = ['A fazer', 'Em andamento', 'Concluído'];
 
@@ -173,7 +175,7 @@ function renderProjects() {
   $('importBox').hidden = !!S.projetos.length;
   $('projs').innerHTML = L.length ? L.map(p => {
     const u = users30(p.id), bugs = S.feedback.filter(f => f.projeto_id === p.id && !f.resolvido).length;
-    return `<div class="c glass stat" data-open="${p.id}" role="button" tabindex="0" style="cursor:pointer;text-align:left"><div class="row"><div class="ico">${svg(tipoIc(p.tipo))}</div><span class="pill"><span class="st" style="margin:0"><i style="background:${STC[p.status]}"></i>${STS[p.status]}</span></span></div>
+    return `<div class="c glass stat" data-open="${p.id}" role="button" tabindex="0" style="cursor:pointer;text-align:left"><div class="row">${icoBox(p)}<span class="pill"><span class="st" style="margin:0"><i style="background:${STC[p.status]}"></i>${STS[p.status]}</span></span></div>
     <b style="font-size:17px">${esc(p.nome)}</b><small style="display:block;color:var(--mut)">${TIPO_NOME(p.tipo)} · ${esc(p.tecnologia || '—')}</small>
     <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:12px"><span>Progresso</span><b>${p.progresso}%</b></div><div class="bar"><i style="width:${p.progresso}%"></i></div>
     <div style="display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:13px;color:var(--mut)"><span>${u ? num(u) + ' usuários (30d)' : 'Sem dados ainda'}</span>${bugs ? `<span class="chip dn">${bugs} aberto${bugs > 1 ? 's' : ''}</span>` : ''}</div></div>`;
@@ -183,9 +185,77 @@ $('projs').onclick = e => { const c = e.target.closest('[data-open]'); if (c) op
 $('projs').onkeydown = e => { if (e.key === 'Enter') { const c = e.target.closest('[data-open]'); if (c) openProject(c.dataset.open); } };
 seg('pk', t => { pk = t; renderProjects(); });
 $('newBtn').onclick = () => { $('nf').hidden = !$('nf').hidden; if (!$('nf').hidden) $('nn').focus(); };
-$('nf').onsubmit = e => { e.preventDefault(); act(async () => { await Store.add('projetos', { nome: $('nn').value.trim(), tipo: $('nk').value, tecnologia: $('ns').value.trim(), github: $('ng').value.trim().replace(/^https?:\/\/github\.com\//, ''), status: 0, progresso: 0 }); $('nf').reset(); $('nf').hidden = true; renderAll(); }, 'Projeto criado'); };
+$('nf').onsubmit = e => { e.preventDefault(); act(async () => { const np = await Store.add('projetos', { nome: $('nn').value.trim(), tipo: $('nk').value, tecnologia: $('ns').value.trim(), github: $('ng').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''), status: 0, progresso: 0 }); $('nf').reset(); $('nf').hidden = true; renderAll(); autoIcon(np); }, 'Projeto criado'); };
 $('importBtn').onclick = () => act(async () => { await Store.addMany('projetos', window.MEUS_PROJETOS); renderAll(); }, 'Seus 12 projetos foram importados');
 $('q').oninput = () => { if (view !== 'projects') nav('projects'); renderProjects(); };
+
+/* ---------- Ícone original do projeto ---------- */
+function probeImg(url) {
+  return new Promise(res => { const i = new Image(); let done = false; const end = v => { if (!done) { done = true; res(v); } };
+    i.referrerPolicy = 'no-referrer'; i.onload = () => end(i.naturalWidth >= 16 ? { url, w: i.naturalWidth } : null); i.onerror = () => end(null); setTimeout(() => end(null), 6000); i.src = url; });
+}
+async function iconFromSite(raw) {
+  let base; try { base = new URL(/^https?:\/\//.test(raw) ? raw : 'https://' + raw); } catch (e) { return null; }
+  const cands = [];
+  try { // a página costuma deixar ler (GitHub Pages, Netlify, Vercel…)
+    const html = await (await fetch(base.href, { mode: 'cors' })).text(), doc = new DOMParser().parseFromString(html, 'text/html');
+    const man = doc.querySelector('link[rel="manifest"]');
+    if (man) try { const mu = new URL(man.getAttribute('href'), base); const m = await (await fetch(mu.href)).json();
+      (m.icons || []).forEach(ic => cands.push({ url: new URL(ic.src, mu).href, s: Math.max(...String(ic.sizes || '0').split(/\s+/).map(x => parseInt(x) || 0)) + 1000 })); } catch (e) {}
+    doc.querySelectorAll('link[rel~="icon"],link[rel~="apple-touch-icon"],link[rel="shortcut icon"]').forEach(l => { const sz = parseInt(l.getAttribute('sizes')) || (/apple/.test(l.rel) ? 180 : 32); cands.push({ url: new URL(l.getAttribute('href'), base).href, s: sz + (/svg/.test(l.getAttribute('href')) ? 400 : 0) }); });
+  } catch (e) {}
+  cands.sort((a, b) => b.s - a.s);
+  for (const c of cands.slice(0, 4)) { const ok = await probeImg(c.url); if (ok) return ok.url; }
+  const dir = new URL('./', base).href, tries = ['icons/icon-512.png', 'icon-512.png', 'icons/icon-192.png', 'apple-touch-icon.png', 'favicon.png', 'favicon.ico'];
+  for (const t of [...new Set([...tries.map(x => dir + x), ...tries.map(x => base.origin + '/' + x)])]) { const ok = await probeImg(t); if (ok && ok.w >= 32) return ok.url; }
+  return null;
+}
+async function iconFromGithub(repo) {
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo || '')) return null;
+  try {
+    const r = await fetch('https://api.github.com/repos/' + repo + '/git/trees/HEAD?recursive=1'); if (!r.ok) return null;
+    const T = (await r.json()).tree || [];
+    const score = path => {
+      const f = path.toLowerCase(), n = f.split('/').pop();
+      if (!/\.(png|svg|webp|jpg|jpeg|ico)$/.test(n) || /(^|\/)(node_modules|\.git|test|tests|docs|screenshots?|vendor|build|dist)\//.test(f)) return 0;
+      let s = 0;
+      if (/^(app[-_]?)?icon[-_]?(512|1024)/.test(n) || /icon[-_]?512x512/.test(n)) s = 100;
+      else if (/mipmap-xxxhdpi\/ic_launcher(_round)?\./.test(f)) s = 98;
+      else if (/^(app[-_]?)?icon[-_]?(384|256|192)/.test(n) || /appicon/.test(f) && /1024/.test(n)) s = 92;
+      else if (/^apple-touch-icon/.test(n)) s = 85;
+      else if (/^(app[-_]?icon|icon|launcher[-_]?icon)\.(png|svg|webp)$/.test(n)) s = 80;
+      else if (/^logo([-_]?(512|256|192))?\.(png|svg|webp)$/.test(n)) s = 70;
+      else if (/^favicon\.(png|svg)$/.test(n)) s = 60;
+      else if (/^ic_launcher\.(png|webp)$/.test(n)) s = 55;
+      else if (/^favicon\.ico$/.test(n)) s = 40;
+      return s ? s - path.split('/').length * .5 : 0;
+    };
+    const best = T.filter(x => x.type === 'blob').map(x => ({ p: x.path, s: score(x.path) })).filter(x => x.s).sort((a, b) => b.s - a.s)[0];
+    if (!best) return null;
+    const url = 'https://raw.githubusercontent.com/' + repo + '/HEAD/' + best.p.split('/').map(encodeURIComponent).join('/');
+    return (await probeImg(url)) ? url : null;
+  } catch (e) { return null; }
+}
+const ICON_TRY = 'painel_icone_tentativas';
+async function autoIcon(p, force) {
+  if (!p || (p.icone && !force)) return false;
+  const tried = (() => { try { return JSON.parse(localStorage.getItem(ICON_TRY)) || {}; } catch (e) { return {}; } })(), key = p.id + '|' + p.url_app + '|' + p.github;
+  if (!force && tried[key] > Date.now() - 7 * DAY) return false;
+  tried[key] = Date.now(); try { localStorage.setItem(ICON_TRY, JSON.stringify(tried)); } catch (e) {}
+  const url = (p.url_app && await iconFromSite(p.url_app)) || (p.github && await iconFromGithub(p.github));
+  if (!url) return false;
+  try { await Store.upd('projetos', p.id, { icone: url }); } catch (e) { if (force) throw e; return false; }
+  renderAll(); return true;
+}
+async function autoIconsAll() { for (const p of S.projetos.filter(p => !p.icone && (p.url_app || p.github))) await autoIcon(p); }
+function fileToIcon(file) {
+  return new Promise((res, rej) => {
+    if (!/^image\//.test(file.type)) return rej(new Error('Escolha um arquivo de imagem.'));
+    const u = URL.createObjectURL(file), i = new Image();
+    i.onload = () => { const n = 192, c = document.createElement('canvas'); c.width = c.height = n; const x = c.getContext('2d'), r = Math.max(n / i.width, n / i.height), w = i.width * r, h = i.height * r; x.drawImage(i, (n - w) / 2, (n - h) / 2, w, h); URL.revokeObjectURL(u); let d = c.toDataURL('image/webp', .9); if (!/^data:image\/webp/.test(d)) d = c.toDataURL('image/png'); res(d); };
+    i.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Não deu para abrir essa imagem.')); }; i.src = u;
+  });
+}
 
 /* ---------- Gaveta do projeto ---------- */
 let openId = null, delArm = false;
@@ -195,12 +265,14 @@ function openProject(id) {
   const tk = S.tarefas.filter(t => t.projeto_id === id), vs = S.versoes.filter(v => v.projeto_id === id);
   const erros = S.eventos.filter(e => e.projeto_id === id && e.tipo === 'erro' && new Date(e.criado_em) > lim).length;
   $('dpanel').innerHTML = `
-  <div style="display:flex;gap:12px;align-items:flex-start"><div class="ico" style="margin:0">${svg(tipoIc(p.tipo))}</div><div class="grow" style="flex:1"><h2>${esc(p.nome)}</h2><small style="color:var(--mut)">${TIPO_NOME(p.tipo)} · ${esc(p.tecnologia || '—')}</small></div><button class="ib" data-x="close" aria-label="Fechar">✕</button></div>
+  <div style="display:flex;gap:12px;align-items:flex-start">${icoBox(p, 'margin:0;width:56px;height:56px')}<div class="grow" style="flex:1"><h2>${esc(p.nome)}</h2><small style="color:var(--mut)">${TIPO_NOME(p.tipo)} · ${esc(p.tecnologia || '—')}</small></div><button class="ib" data-x="close" aria-label="Fechar">✕</button></div>
   <div class="sec"><h3>Status</h3><div class="seg" id="dst">${STS.map((s, i) => `<button class="${p.status == i ? 'on' : ''}" data-s="${i}">${s}</button>`).join('')}</div>
    <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:14px"><span>Progresso</span><b id="dpv">${p.progresso}%</b></div>
    <input type="range" min="0" max="100" step="5" value="${p.progresso}" id="dpr" aria-label="Progresso" style="width:100%;accent-color:var(--acc);height:28px"></div>
   <div class="sec"><h3>Números</h3><div class="kv"><div><b>${num(users30(id))}</b><small>Usuários 30d</small></div><div><b>${num(evOf(id, 'instalar').length)}</b><small>Instalações</small></div><div><b>${erros}</b><small>Erros 30d</small></div><div><b>${S.feedback.filter(f => f.projeto_id === id && !f.resolvido).length}</b><small>Bugs abertos</small></div></div></div>
   <div class="sec"><h3>Informações</h3>
+   <div class="iconrow">${icoBox(p, 'margin:0;width:64px;height:64px')}<div style="flex:1;min-width:0"><b style="display:block">Ícone do projeto</b><small style="color:var(--mut)">${p.icone ? 'Ícone original do projeto.' : 'Busco no link do app/site e no GitHub, ou você envia a imagem.'}</small>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="mini" data-x="icauto">Buscar automático</button><label class="mini" for="dicf" style="display:inline-flex;align-items:center;cursor:pointer">Enviar imagem</label><input type="file" id="dicf" accept="image/*" hidden>${p.icone ? '<button class="mini" data-x="icdel">Remover</button>' : ''}</div></div></div>
    <label class="lbl" for="dn">Nome</label><input class="inp" id="dn" value="${esc(p.nome)}" maxlength="80">
    <div class="row2"><div><label class="lbl" for="dk">Tipo</label><select class="inp" id="dk"><option ${p.tipo === 'App' ? 'selected' : ''}>App</option><option ${p.tipo === 'Jogo' ? 'selected' : ''}>Jogo</option><option value="Site" ${p.tipo === 'Site' ? 'selected' : ''}>Site / Web app</option></select></div><div><label class="lbl" for="dt">Tecnologia</label><input class="inp" id="dt" value="${esc(p.tecnologia)}" maxlength="120"></div></div>
    <label class="lbl" for="dg">Repositório no GitHub (usuario/repo)</label><input class="inp" id="dg" value="${esc(p.github)}" placeholder="carlosandre1514-prog/meu-app" maxlength="120">
@@ -239,11 +311,13 @@ $('dpanel').onclick = e => {
   if (b.dataset.s != null) return act(async () => { const s = +b.dataset.s; await Store.upd('projetos', id, s === 2 ? { status: 2, progresso: 100 } : { status: s }); renderAll(); openProject(id); }, +b.dataset.s === 2 ? 'Projeto lançado! 🚀' : 'Status atualizado');
   const x = b.dataset.x;
   if (x === 'close') closeDrawer();
-  if (x === 'save') act(async () => { await Store.upd('projetos', id, { nome: $('dn').value.trim() || 'Sem nome', tipo: $('dk').value, tecnologia: $('dt').value.trim(), github: $('dg').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''), url_app: $('du').value.trim(), notas: $('dno').value }); renderAll(); openProject(id); }, 'Projeto salvo');
+  if (x === 'icauto') { b.disabled = true; b.textContent = 'Procurando…'; act(async () => { const ok = await autoIcon(proj(id), true); if (openId === id) openProject(id); toast(ok ? 'Ícone encontrado' : 'Não achei um ícone. Coloque o link do app/site ou o repositório do GitHub, ou envie a imagem.'); }); }
+  if (x === 'icdel') act(async () => { await Store.upd('projetos', id, { icone: '' }); renderAll(); openProject(id); }, 'Ícone removido');
+  if (x === 'save') act(async () => { await Store.upd('projetos', id, { nome: $('dn').value.trim() || 'Sem nome', tipo: $('dk').value, tecnologia: $('dt').value.trim(), github: $('dg').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''), url_app: $('du').value.trim(), notas: $('dno').value }); renderAll(); openProject(id); autoIcon(proj(id)); }, 'Projeto salvo');
   if (x === 'apps') { const ok = S.chaves.some(c => c.projeto_id === id); closeDrawer(); nav('apps'); if (ok) { appSel = id; openApps(id); } else showConnect(id); }
   if (x === 'del') { if (!delArm) { delArm = true; b.textContent = 'Toque de novo para excluir tudo deste projeto'; return; } act(async () => { await Store.del('projetos', id); closeDrawer(); renderAll(); }, 'Projeto excluído'); }
 };
-$('dpanel').onchange = e => { const t = e.target.dataset.tk; if (t) act(async () => { await Store.upd('tarefas', t, { coluna: e.target.checked ? 2 : 0 }); renderAll(); openProject(openId); }); };
+$('dpanel').onchange = e => { if (e.target.id === 'dicf') { const f = e.target.files[0], id = openId; if (f) act(async () => { await Store.upd('projetos', id, { icone: await fileToIcon(f) }); renderAll(); openProject(id); }, 'Ícone salvo'); return; } const t = e.target.dataset.tk; if (t) act(async () => { await Store.upd('tarefas', t, { coluna: e.target.checked ? 2 : 0 }); renderAll(); openProject(openId); }); };
 async function copy(text, ok) { try { await navigator.clipboard.writeText(text); toast(ok); } catch (e) { toast('Não deu para copiar. Segure no texto e copie à mão.'); } }
 
 /* ================= Apps conectados ================= */
@@ -299,7 +373,7 @@ function renderApps() {
   const up = D.uptime || [], up30 = up.filter(u => u.dia >= dkey(lim)).reduce((a, u) => a + u.segundos, 0);
   // Servidor
   const ult = s?.ultimo_sinal;
-  $('asrv').innerHTML = `<div class="st-main"><span class="pulse ${s ? (sOn ? 'on' : 'off') : ''}"></span><div><b>${s ? (sOn ? 'Servidor online' : 'Servidor offline') : 'Nenhum servidor enviando sinal'}</b><small>${s ? (sOn ? 'Ativo há ' + dur((now - new Date(s.ativo_desde)) / 1000) + (s.versao ? ' · versão ' + esc(s.versao) : '') : 'Último sinal ' + (ult ? ago(ult) : '—')) : 'Use o código do servidor (abaixo) para ver online, horas ativas e status.'}</small></div></div>
+  $('asrv').innerHTML = `<div class="st-main">${p ? icoBox(p, 'margin:0;width:46px;height:46px') : ''}<span class="pulse ${s ? (sOn ? 'on' : 'off') : ''}"></span><div><b>${s ? (sOn ? 'Servidor online' : 'Servidor offline') : 'Nenhum servidor enviando sinal'}</b><small>${s ? (sOn ? 'Ativo há ' + dur((now - new Date(s.ativo_desde)) / 1000) + (s.versao ? ' · versão ' + esc(s.versao) : '') : 'Último sinal ' + (ult ? ago(ult) : '—')) : 'Use o código do servidor (abaixo) para ver online, horas ativas e status.'}</small></div></div>
    <div class="kvs"><div><b>${num(online)}</b><small>Online agora</small></div><div><b>${(up30 / 3600).toFixed(1).replace('.', ',')} h</b><small>Ativo em 30 dias</small></div><div><b>${up.length ? (up30 / (30 * 864) ).toFixed(1).replace('.', ',') + '%' : '—'}</b><small>Disponibilidade</small></div><div><b>${num(Math.max(0, ...up.map(u => u.pico_online)))}</b><small>Pico online (30d)</small></div><div><b>${ult ? ago(ult) : '—'}</b><small>Último sinal</small></div></div>`;
   // Jogadores
   $('aplayers').innerHTML = [['team', num(total), (p?.tipo === 'Jogo' ? 'Jogadores' : p?.tipo === 'Site' ? 'Visitantes' : 'Usuários') + ' no total'], ['user', num(online) + `<small>${total ? Math.round(online / total * 100) : 0}%</small>`, 'Online agora'], ['clock', num(Math.max(0, total - online)), 'Offline'], ['up', num(novos30), 'Novos (30 dias)', trend(novos30, novos60)]].map(stat).join('');
@@ -475,7 +549,8 @@ window.painel = (function () {
     if (!timer) timer = setTimeout(enviar, 1500);
   }
   if (!ls.getItem('painel_inst')) { ls.setItem('painel_inst', '1'); evento('instalar'); }
-  evento('abrir');
+  var ic = document.querySelector('link[rel~="apple-touch-icon"]') || document.querySelector('link[rel~="icon"]');
+  evento('abrir', ic && /^https:/.test(ic.href) ? { icone: ic.href } : {}); // o painel usa o ícone do app
   setInterval(function () { if (!document.hidden) evento('ping'); }, 60000);
   document.addEventListener('visibilitychange', function () { if (document.hidden) { evento('saiu'); enviar(true); } else evento('ping'); });
   window.addEventListener('error', function (e) { evento('erro', { mensagem: String(e.message).slice(0, 300) }); });
@@ -516,7 +591,7 @@ Corpo (JSON):
 
 ## Eventos que o painel entende (tipo → dados)
 - instalar → {} (só na primeira vez que o app abre no aparelho)
-- abrir → {} (toda vez que o app abre)
+- abrir → { "icone": "URL https pública do ícone do app (opcional)" } (toda vez que o app abre; se o ícone do projeto estiver publicado na internet, mande a URL dele aqui e o painel passa a mostrar o ícone original)
 - ping → {} (a cada 60 segundos enquanto o usuário está com o app aberto e visível: mantém ele como ONLINE)
 - saiu → {} (quando o usuário fecha ou minimiza o app: marca como OFFLINE)
 - entrou → {} (jogador conectou no servidor do jogo: marca como ONLINE)
@@ -763,6 +838,7 @@ async function enter(session) {
   $('login').hidden = true; $('shell').hidden = false; $('demoBar').hidden = Store.mode !== 'demo';
   await act(() => Store.load());
   renderAll(); go();
+  setTimeout(autoIconsAll, 1500);
   Store.live(onLive);
 }
 

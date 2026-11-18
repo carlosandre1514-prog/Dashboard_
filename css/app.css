@@ -145,3 +145,5 @@ body[data-modo=claro] .bar{background:rgba(11,42,51,.12)}
 .num{font-variant-numeric:tabular-nums}
 #abody{display:flex;flex-direction:column;gap:16px}@media(max-width:600px){#abody{gap:10px}.srv .kvs{gap:8px 16px}}
 .seg.scroll{flex:1 1 auto}.seg.scroll button{flex:none}
+.ico.has-img{background:rgba(255,255,255,.08);overflow:hidden;padding:0}.ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+.iconrow{display:flex;gap:14px;align-items:center;padding:4px 0 6px}

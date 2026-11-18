@@ -204,3 +204,17 @@ alter table public.painel_feedback drop constraint if exists painel_feedback_con
 -- Tipo "Site" para projetos e ideias
 alter table public.painel_projetos drop constraint if exists painel_projetos_tipo_check, add constraint painel_projetos_tipo_check check (tipo = any (array['App','Jogo','Site']));
 alter table public.painel_ideias drop constraint if exists painel_ideias_categoria_check, add constraint painel_ideias_categoria_check check (categoria = any (array['Jogo','App','Site','Manhwa','Outro']));
+
+-- Ícone original de cada projeto (URL ou imagem pequena) + captura automática pelo app
+alter table public.painel_projetos add column if not exists icone text not null default '' check (char_length(icone) <= 300000);
+create or replace function painel_priv.icone_do_app() returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  if (new.dados->>'icone') ~ '^https://[^\s"<>]{4,490}$' then
+    update public.painel_projetos set icone = new.dados->>'icone' where id = new.projeto_id and icone = '';
+  end if;
+  return new;
+end $$;
+revoke all on function painel_priv.icone_do_app() from public;
+drop trigger if exists painel_eventos_icone on public.painel_eventos;
+create trigger painel_eventos_icone after insert on public.painel_eventos for each row
+  when (new.tipo in ('abrir', 'instalar') and new.dados ? 'icone') execute function painel_priv.icone_do_app();
